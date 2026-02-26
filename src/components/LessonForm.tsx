@@ -309,42 +309,36 @@ export default function LessonForm() {
               </button>
 
               {generatedPlan && (
-                <motion.button
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                <button
                   type="button"
                   onClick={() => downloadDocx(generatedPlan)}
-                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-4 duration-300"
                 >
                   <Download className="w-5 h-5" />
                   Baixar
-                </motion.button>
+                </button>
               )}
             </div>
           </form>
 
           {error && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100"
+            <div 
+              className="mt-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 animate-in fade-in slide-in-from-bottom-2 duration-300"
             >
               {error}
-            </motion.div>
+            </div>
           )}
 
           {generatedPlan && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200 flex items-center gap-3"
+            <div 
+              className="mt-6 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
             >
               <FileText className="w-6 h-6" />
               <div>
                 <p className="font-semibold">Plano de Aula gerado com sucesso!</p>
                 <p className="text-sm opacity-90">Clique no botão "Baixar" acima para salvar o arquivo em Word (.docx).</p>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </motion.div>
