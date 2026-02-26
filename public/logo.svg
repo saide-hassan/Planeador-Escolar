@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Document Background -->
+  <path d="M368 480H144c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h224c26.5 0 48 21.5 48 48v352c0 26.5-21.5 48-48 48z" fill="#ffffff" stroke="#003366" stroke-width="24"/>
+  
+  <!-- Header Blue Box -->
+  <rect x="136" y="88" width="48" height="48" fill="#2196f3"/>
+  <rect x="200" y="96" width="176" height="32" rx="4" fill="#2196f3"/>
+  
+  <!-- Content Lines -->
+  <rect x="136" y="168" width="240" height="16" rx="4" fill="#0d47a1"/>
+  
+  <!-- Checkboxes and Lines -->
+  <rect x="136" y="216" width="32" height="32" rx="4" fill="none" stroke="#2196f3" stroke-width="4"/>
+  <path d="M142 232l8 8 16-16" fill="none" stroke="#2196f3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="192" y="224" width="144" height="16" rx="4" fill="#64b5f6"/>
+  
+  <rect x="136" y="272" width="32" height="32" rx="4" fill="none" stroke="#2196f3" stroke-width="4"/>
+  <path d="M142 288l8 8 16-16" fill="none" stroke="#2196f3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="192" y="280" width="128" height="16" rx="4" fill="#64b5f6"/>
+  
+  <!-- Pen -->
+  <path d="M464 128L336 256l-32 128 128-32 128-128-128-128z" fill="#0d47a1"/>
+  <path d="M336 256l-24 96 96-24" fill="#1e88e5"/>
+  <path d="M304 384l32-32" fill="#ffffff"/>
+  <circle cx="312" cy="392" r="8" fill="#0d47a1"/>
+  
+  <!-- Swoosh at bottom -->
+  <path d="M144 400c0 0 64 32 160 16" fill="none" stroke="#0d47a1" stroke-width="16" stroke-linecap="round"/>
+</svg>

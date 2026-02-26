@@ -1,0 +1,147 @@
+import { GoogleGenAI } from "@google/genai";
+import { LessonPlan, LessonPlanInput } from "../types";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
+  const model = "gemini-3-flash-preview";
+  
+  const prompt = `
+    Você é um especialista em pedagogia com vasta experiência no currículo moçambicano (1ª à 12ª classe).
+    Sua tarefa é criar um plano de aula detalhado com base nos seguintes dados fornecidos pelo professor:
+
+    Escola: ${input.school}
+    Disciplina: ${input.subject}
+    Data: ${input.date}
+    Unidade Temática: ${input.unit}
+    Classe: ${input.grade}
+    Tema: ${input.topic}
+    Duração: ${input.duration} minutos
+    Professor: ${input.teacher}
+    Materiais: ${input.materials}
+
+    Contexto sobre as Funções Didácticas (Use como base para estruturar o conteúdo):
+    
+    1. Introdução e Motivação:
+       Esta função didáctica ocorre no princípio de uma aula e é considerado como o desenhador para o sucesso de uma aprendizagem dos alunos. Ela prepara o aluno para seguir o ritmo da aula. Segundo Libâneo (2004) a introdução e motivação pode incluir perguntas do professor para monitorar o nível de percepção das matérias transmitidas no passado recente e pronto para a recepção de um conhecimento novo. Neste item, a função do professor moderador é estimular os alunos a trazer novas abordagens da matéria, fazendo com que o aluno saiba conectar o aprendizado com a vida real. Por conseguinte, as correcções dos trabalhos de casa, são aqui efectivados, servindo de reforço e consolidação da aula passada.
+       Resumindo:
+       - Criar disposição e ambiente favorável aos alunos, que possam assegurar o bom decurso do processo de ensino e processo de aprendizagem.
+       - Consolidar o nível inicial e orientar o aluno para o novo conteúdo.
+       - Motivar permanentemente com o fim de manter o interesse e a atenção do aluno através de avaliação de estímulos.
+
+    2. Mediação e Assimilação:
+       Segundo Piletti (1991) mediação pode ser definida como uma ação concreta do processo de ensino e aprendizagem em que o professor passa os conteúdos e envolve diálogo e no final faz uma síntese da aula e pode-se entender também como sendo um processo em que o professor orienta o processo de ensino e aprendizagem em que são necessários elementos como: professor, aluno, conteúdo, material didático, método e fins a atingir. Nesta função didática, o professor explica detalhadamente os conteúdos contidos no seu plano de aula com exemplos concretos para sua maior percepção. Nisto, o professor deve fazer entender a matéria com uma boa análise, síntese, sistematização, generalização e demonstração. E é exigido a executar o que planejou, mostrando suas habilidades, exercendo mais do que em outras fases a sua função de liderança, motivando a aprendizagem, utilizando métodos, recursos e procedimentos, procurando criar uma situação favorável ao processo de ensino e aprendizagem.
+
+    3. Domínio e Consolidação:
+       Para Piletti (1991) define o domínio e consolidação como sendo um momento da aula em que se realizam ações com a finalidade de sistematizar, refletir e aplicar o que foi lecionado e ainda são realizados exercícios de consolidação que leva a fixação e formação de habilidades e hábitos, bem como auxiliam a sistematização da matéria. O professor como moderador, orienta a resolução de alguns exercícios de consolidação, acompanhando e esclarecendo algumas dúvidas que possam aparecer (Piletti, 2004). Para Caires & Almeida (2001) o professor com a colaboração dos alunos faz o resumo apropriado que ajudará o aluno no seu estudo individual, pois o domínio constitui a formação e desenvolvimento de habilidades por parte dos instruendos, enquanto a consolidação consiste em recordar a matéria sobre habilidades e conhecimentos. Nesta fase, pretende-se alcançar o aprimoramento do já (não) novo saber nos alunos, para isso, o professor deve criar condições necessárias de retenção e compreensão das matérias lecionada através de exercícios e atividades práticas para solidificar a compreensão - repetição, sistematização e aplicação.
+
+    4. Controle e Avaliação:
+       Para Dias et. Al (2010) se tratando da última função didática, o professor na qualidade de mediador da aula faz uma análise crítica de modo a compreender e interpretar os fenômenos educacionais observados na planificação, certificando o nível de percepção da matéria partilhada, fazendo algumas perguntas para averiguar o entendimento, como maneira de criar mais interesse nos alunos e por fim, avaliar se conseguiu alcançar os objetivos por si planificados. De acordo com Libânio (1994) o mediador conduz efetivamente o processo de ensino e processo de aprendizagem, conhecendo permanentemente o grau das dificuldades dos seus alunos na compreensão da matéria. Este controle sistemático consistirá no acompanhamento da aprendizagem, avaliando-se e avaliando as atividades dos alunos em função dos objetivos preconizados. Nessa lógica, a avaliação não deve ser entendida como um fim em si, mas um meio para averiguar as mudanças de comportamento, pois permite identificar os alunos que necessitam de atenção especial e se possível, uma futura reformulação do mesmo trabalho com a adopção de procedimento para sanar tais dificuldades. Isto só pode acontecer com o professor que conhece e convive bem com os seus alunos.
+
+    ${(input.subject.toLowerCase().includes('português') || input.subject.toLowerCase().includes('portugues')) && (input.grade.includes('7') || input.grade.includes('8')) ? `
+    CONTEXTO ESPECÍFICO PARA LÍNGUA PORTUGUESA (7ª e 8ª Classe - Currículo Moçambicano):
+    Baseie-se na seguinte estrutura de Unidades Temáticas típica dos manuais escolares fornecidos:
+    
+    ESTRUTURA CÍCLICA DAS UNIDADES:
+    1. Textos Normativos:
+       - 7ª Classe: Regulamento Escolar (estrutura, linguagem), Sujeitos (simples/composto), Preposições (a, de, com).
+       - 8ª Classe: Regulamentos (escola, concursos), Voz Passiva, Concordância nominal e verbal.
+    
+    2. Textos Administrativos:
+       - 7ª Classe: Aviso (estrutura, linguagem), Particípio passado (avisar, informar), Voz passiva de 'se' e 'ser'.
+       - 8ª Classe: Requerimento (estrutura, linguagem), Verbos regulares (conjuntivo), Formas de tratamento.
+    
+    3. Textos Jornalísticos:
+       - 7ª Classe: Notícia (estrutura, lead, corpo), Complementos circunstanciais (tempo, lugar, causa, fim).
+       - 8ª Classe: Notícia e Fait-divers, Advérbios (tempo, lugar, modo), Numerais, Percentagens.
+    
+    4. Textos Multiuso:
+       - 7ª Classe: Manuais Escolares, Instruções técnicas (medicamentos), Pronomes (demonstrativos, possessivos, interrogativos, indefinidos).
+       - 8ª Classe: Instruções (aparelhos, receitas), Verbos transitivos/intransitivos, Modo Imperativo.
+    
+    5. Textos Literários:
+       - 7ª Classe: Conto e Fábula, Texto Poético, Texto Dramático. Gramática: Adjetivos (graus), Palavras homónimas/parónimas, Derivação (prefixação/sufixação).
+       - 8ª Classe: Narrativa (romance, conto), Poesia (estrofes, rima, versos), Texto Dramático. Gramática: Orações subordinadas, Verbos irregulares.
+    
+    IMPORTANTE: Ao gerar o plano, certifique-se de que o TEMA e o CONTEÚDO estejam alinhados com esta estrutura curricular específica para a classe selecionada.
+    ` : ''}
+
+    Requisitos Obrigatórios:
+    1. Defina "Objectivos" claros e mensuráveis para a aula. Forneça-os como uma lista de frases separadas por quebras de linha (sem marcadores como "-" ou "1.", apenas o texto).
+    2. Estruture a aula nas seguintes Funções Didácticas (exatamente com estes nomes):
+       - Introdução e Motivação
+       - Mediação e Assimilação
+       - Domínio e Consolidação
+       - Controlo e Avaliação
+    3. Para cada função didáctica, defina:
+       - Tempo (distribua os ${input.duration} minutos de forma lógica entre as fases).
+       - Conteúdo (tópicos abordados).
+       - Actividades do Professor (o que o professor faz).
+       - Actividades do Aluno (o que o aluno faz).
+       - Métodos: Escolha entre "Expositivo", "Elaboração Conjunta", "Trabalho Independente", "Trabalho em Grupo".
+       - Obs: Alguma observação relevante (pode ser vazio).
+    
+    ${input.includeExercises ? `
+    4. IMPORTANTE: Na fase de "Domínio e Consolidação", você DEVE incluir uma lista de 3 a 5 exercícios práticos relacionados ao tema para os alunos resolverem na aula. Liste-os explicitamente no campo "Conteúdo" ou "Actividades do Professor".
+    ` : ''}
+
+    ${input.includeHomework ? `
+    5. IMPORTANTE: Na fase de "Controlo e Avaliação", você DEVE incluir explicitamente um TPC (Trabalho Para Casa) com 2 a 3 questões ou tarefas para os alunos. Liste-os no campo "Conteúdo" ou "Actividades do Professor".
+    ` : ''}
+
+    6. O conteúdo deve ser adequado à classe (${input.grade}) e ao tema (${input.topic}).
+    7. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
+
+    Retorne APENAS um JSON válido com a seguinte estrutura, sem markdown ou texto adicional:
+    {
+      "objectives": "Texto dos objectivos...",
+      "didacticFunctions": [
+        {
+          "name": "Introdução e Motivação",
+          "time": "X min",
+          "content": "...",
+          "activities": {
+            "teacher": "...",
+            "student": "..."
+          },
+          "method": "...",
+          "obs": "..."
+        },
+        ... (para as outras 3 funções)
+      ],
+      "contentSummary": "Texto dos apontamentos para o aluno copiar. IMPORTANTE: O texto NÃO deve ser exageradamente sucinto nem excessivamente extenso. Deve ter uma extensão equilibrada e um nível de linguagem perfeitamente adequado à classe (${input.grade}) e à idade dos alunos. Deve cobrir os conceitos principais de forma clara e pedagógica.",
+      "exercisesList": ["Exercício 1...", "Exercício 2...", "Exercício 3..."],
+      "homeworkList": ["TPC 1...", "TPC 2..."]
+    }
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    let text = response.text;
+    if (!text) throw new Error("Sem resposta da IA");
+
+    // Remove markdown code blocks if present
+    text = text.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+
+    const data = JSON.parse(text);
+
+    return {
+      ...input,
+      objectives: data.objectives,
+      didacticFunctions: data.didacticFunctions,
+      contentSummary: data.contentSummary || "",
+      exercisesList: data.exercisesList || [],
+      homeworkList: data.homeworkList || []
+    };
+  } catch (error) {
+    console.error("Erro ao gerar plano de aula:", error);
+    throw error;
+  }
+}
