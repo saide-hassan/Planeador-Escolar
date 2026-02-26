@@ -57,7 +57,7 @@ export default function UpdateModal() {
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold mb-1">O que há de novo?</h2>
-                <p className="text-blue-100 text-sm">Confira as últimas melhorias do Aplicativo</p>
+                <p className="text-blue-100 text-sm">Confira as últimas melhorias do PEM</p>
               </div>
               
               <button 
