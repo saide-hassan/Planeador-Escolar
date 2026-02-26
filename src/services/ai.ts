@@ -96,7 +96,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
     5. IMPORTANTE: Na fase de "Controlo e Avaliação", você DEVE incluir explicitamente um TPC (Trabalho Para Casa) com 2 a 3 questões ou tarefas para os alunos. Liste-os no campo "Conteúdo" ou "Actividades do Professor".
     ` : ''}
 
-    6. O conteúdo deve ser adequado à classe (${input.grade}) e ao tema (${input.topic}).
+    6. O conteúdo deve ser adequado à classe (${input.grade}) e restringir-se ESTRITAMENTE ao tema fornecido (${input.topic}). Não aborde outros assuntos não solicitados.
     7. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
 
     Retorne APENAS um JSON válido com a seguinte estrutura, sem markdown ou texto adicional:
@@ -116,7 +116,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
         },
         ... (para as outras 3 funções)
       ],
-      "contentSummary": "Texto dos apontamentos para o aluno copiar. IMPORTANTE: O texto NÃO deve ser exageradamente sucinto nem excessivamente extenso. Deve ter uma extensão equilibrada e um nível de linguagem perfeitamente adequado à classe (${input.grade}) e à idade dos alunos. Deve cobrir os conceitos principais de forma clara e pedagógica.",
+      "contentSummary": "Texto dos apontamentos para o aluno copiar. IMPORTANTE: O texto deve ser EXTENSO e detalhado, cobrindo profundamente o tema, mas mantendo um nível de linguagem perfeitamente adequado à classe (${input.grade}) e à idade dos alunos. Não resuma excessivamente; explique os conceitos com clareza e profundidade pedagógica.",
       "exercisesList": ["Exercício 1...", "Exercício 2...", "Exercício 3..."],
       "homeworkList": ["TPC 1...", "TPC 2..."]
     }
