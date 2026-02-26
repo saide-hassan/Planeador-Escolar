@@ -63,9 +63,10 @@ export default function LessonForm() {
         unit: `${unitNumber}: ${unitName}`
       });
       setGeneratedPlan(plan);
-    } catch (err) {
-      setError('Ocorreu um erro ao gerar o plano. Por favor, tente novamente.');
-      console.error(err);
+    } catch (err: any) {
+      const errorMessage = err?.message || 'Ocorreu um erro desconhecido.';
+      setError(`Erro: ${errorMessage}`);
+      console.error("Detalhes do erro:", err);
     } finally {
       setLoading(false);
     }

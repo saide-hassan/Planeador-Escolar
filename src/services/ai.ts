@@ -132,23 +132,30 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
     });
 
     let text = response.text;
-    if (!text) throw new Error("Sem resposta da IA");
+    console.log("Resposta bruta da IA:", text); // Log para depuração
+
+    if (!text) throw new Error("A IA retornou uma resposta vazia.");
 
     // Remove markdown code blocks if present
     text = text.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
 
-    const data = JSON.parse(text);
-
-    return {
-      ...input,
-      objectives: data.objectives,
-      didacticFunctions: data.didacticFunctions,
-      contentSummary: data.contentSummary || "",
-      exercisesList: data.exercisesList || [],
-      homeworkList: data.homeworkList || []
-    };
-  } catch (error) {
+    try {
+      const data = JSON.parse(text);
+      return {
+        ...input,
+        objectives: data.objectives,
+        didacticFunctions: data.didacticFunctions,
+        contentSummary: data.contentSummary || "",
+        exercisesList: data.exercisesList || [],
+        homeworkList: data.homeworkList || []
+      };
+    } catch (parseError) {
+      console.error("Erro ao fazer parse do JSON:", parseError);
+      throw new Error("A IA gerou uma resposta inválida. Tente novamente.");
+    }
+  } catch (error: any) {
     console.error("Erro ao gerar plano de aula:", error);
+    // Repassar a mensagem de erro original para a UI
     throw error;
   }
 }
