@@ -1,10 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
 import { LessonPlan, LessonPlanInput } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getAiClient = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("A chave da API (GEMINI_API_KEY) não está configurada. Por favor, configure-a no painel do Netlify.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
   const model = "gemini-3-flash-preview";
+  const ai = getAiClient();
   
   const prompt = `
     Você é um especialista em pedagogia com vasta experiência no currículo moçambicano (1ª à 12ª classe).
