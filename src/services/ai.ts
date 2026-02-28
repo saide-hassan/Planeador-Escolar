@@ -9,6 +9,35 @@ const getAiClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
+// Helper function to delay execution
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper function to generate content with retry logic
+async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 3): Promise<any> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await ai.models.generateContent({
+        model: model,
+        contents: contents,
+        config: {
+          responseMimeType: "application/json",
+        }
+      });
+    } catch (error: any) {
+      // Check for 503 Service Unavailable or 429 Too Many Requests
+      if (error?.status === 503 || error?.code === 503 || error?.status === 429 || error?.code === 429) {
+        console.warn(`Tentativa ${i + 1} falhou com erro ${error.status || error.code}. Tentando novamente...`);
+        if (i === retries - 1) throw error; // If last attempt, throw error
+        
+        // Exponential backoff: 2s, 4s, 8s
+        await delay(2000 * Math.pow(2, i));
+      } else {
+        throw error; // Throw other errors immediately
+      }
+    }
+  }
+}
+
 export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
   const model = "gemini-3-flash-preview";
   const ai = getAiClient();
@@ -146,13 +175,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
       });
     }
 
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: { parts },
-      config: {
-        responseMimeType: "application/json",
-      }
-    });
+    const response = await generateContentWithRetry(ai, model, { parts });
 
     let text = response.text;
     console.log("Resposta bruta da IA:", text); // Log para depuração
