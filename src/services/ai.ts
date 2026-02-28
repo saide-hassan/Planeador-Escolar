@@ -26,6 +26,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
     Duração: ${input.duration} minutos
     Professor: ${input.teacher}
     Materiais: ${input.materials}
+    ${input.otherDetails ? `Outros Detalhes/Especificações: ${input.otherDetails}` : ''}
 
     Contexto sobre as Funções Didácticas (Use como base para estruturar o conteúdo):
     
@@ -123,9 +124,31 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
   `;
 
   try {
+    const parts: any[] = [
+      { text: prompt }
+    ];
+
+    // Add attachments to the prompt
+    if (input.attachments && input.attachments.length > 0) {
+      input.attachments.forEach(file => {
+        if (file.isText) {
+          // Add text content directly to prompt parts
+          parts.push({ text: `\n\n[ANEXO: ${file.name}]\n${file.data}\n[FIM DO ANEXO]` });
+        } else {
+          // Add binary content (image/pdf) as inlineData
+          parts.push({
+            inlineData: {
+              mimeType: file.type,
+              data: file.data
+            }
+          });
+        }
+      });
+    }
+
     const response = await ai.models.generateContent({
       model: model,
-      contents: prompt,
+      contents: { parts },
       config: {
         responseMimeType: "application/json",
       }

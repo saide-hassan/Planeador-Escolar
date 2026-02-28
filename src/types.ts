@@ -8,6 +8,13 @@ export interface LessonPlanInput {
   duration: '45' | '90';
   teacher: string;
   materials: string;
+  otherDetails?: string;
+  attachments?: {
+    name: string;
+    type: string;
+    data: string; // Base64 or text content
+    isText: boolean; // true if it's extracted text (like from docx), false if it's base64 (image/pdf)
+  }[];
   includeExercises: boolean;
   includeHomework: boolean;
 }

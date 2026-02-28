@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Loader2, FileText, Download, Sparkles, BookOpen, Sun, Moon } from 'lucide-react';
+import { Loader2, FileText, Download, Sparkles, BookOpen, Sun, Moon, Paperclip, X, File as FileIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { LessonPlanInput, LessonPlan } from '../types';
 import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
+import { processFile, ProcessedFile } from '../utils/fileProcessor';
 
 export default function LessonForm() {
   const [loading, setLoading] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState<LessonPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachments, setAttachments] = useState<ProcessedFile[]>([]);
+  const [processingFile, setProcessingFile] = useState(false);
 
   // Toggle dark mode class on html element
   useEffect(() => {
@@ -50,6 +54,33 @@ export default function LessonForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setProcessingFile(true);
+      setError(null);
+      try {
+        const file = e.target.files[0];
+        // Validate size (max 4MB to be safe with API limits)
+        if (file.size > 4 * 1024 * 1024) {
+          throw new Error("O arquivo é muito grande. O tamanho máximo é 4MB.");
+        }
+        
+        const processed = await processFile(file);
+        setAttachments(prev => [...prev, processed]);
+      } catch (err: any) {
+        setError(`Erro ao processar arquivo: ${err.message}`);
+      } finally {
+        setProcessingFile(false);
+        // Reset input
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -60,7 +91,8 @@ export default function LessonForm() {
       const plan = await generateLessonPlan({
         ...formData,
         school: `${schoolType} ${schoolName}`.trim(),
-        unit: `${unitNumber}: ${unitName}`
+        unit: `${unitNumber}: ${unitName}`,
+        attachments: attachments
       });
       setGeneratedPlan(plan);
     } catch (err: any) {
@@ -230,6 +262,65 @@ export default function LessonForm() {
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   placeholder="Ex: Quadro, giz, apagador, livro do aluno..."
                 />
+              </div>
+
+              <div className="col-span-1 md:col-span-2 space-y-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Outros Detalhes</label>
+                <textarea
+                  name="otherDetails"
+                  value={formData.otherDetails || ''}
+                  onChange={handleChange}
+                  rows={2}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  placeholder="Ex: Focar em exemplos práticos do cotidiano, adaptar para alunos com dificuldades..."
+                />
+                
+                {/* File Upload Section */}
+                <div className="mt-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={processingFile}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-lg transition-colors border border-blue-200 dark:border-blue-800"
+                    >
+                      {processingFile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Paperclip className="w-4 h-4" />}
+                      Anexar Referência (PDF, DOCX, Imagem)
+                    </button>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">Máx: 4MB</span>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.docx,.jpg,.jpeg,.png,.txt"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  
+                  {/* Attachments List */}
+                  {attachments.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {attachments.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <FileIcon className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                            <span className="text-sm text-slate-700 dark:text-slate-300 truncate">{file.name}</span>
+                            <span className="text-xs text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                              {file.isText ? 'Texto Extraído' : 'Arquivo'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeAttachment(index)}
+                            className="p-1 text-slate-400 hover:text-red-500 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="col-span-1 md:col-span-2 flex flex-col sm:flex-row gap-6 pt-2">
