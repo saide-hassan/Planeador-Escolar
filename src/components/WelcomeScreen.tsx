@@ -26,12 +26,12 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           <h1 
             className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-700 delay-300 fill-mode-backwards"
           >
-            Planificador Escolar
+            <span>Planificador Escolar</span>
           </h1>
           <p 
             className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-sm mx-auto animate-in fade-in slide-in-from-bottom-2 duration-700 delay-500 fill-mode-backwards"
           >
-            A ferramenta inteligente para professores. Crie planos de aula completos, apontamentos e exercícios em segundos.
+            <span>A ferramenta inteligente para professores. Crie planos de aula completos, apontamentos e exercícios em segundos.</span>
           </p>
         </div>
 

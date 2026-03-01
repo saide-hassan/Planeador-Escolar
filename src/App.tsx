@@ -16,12 +16,12 @@ export default function App() {
     <ErrorBoundary>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-8 transition-colors duration-300">
         {showWelcome ? (
-          <WelcomeScreen onStart={() => setShowWelcome(false)} />
+          <WelcomeScreen key="welcome-screen" onStart={() => setShowWelcome(false)} />
         ) : (
-          <>
+          <div key="main-content">
             <UpdateModal />
             <LessonForm />
-          </>
+          </div>
         )}
       </div>
     </ErrorBoundary>
