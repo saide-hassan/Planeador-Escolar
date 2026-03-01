@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'motion/react';
 import { Loader2, FileText, Download, Sparkles, BookOpen, Sun, Moon, Paperclip, X, File as FileIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { LessonPlanInput, LessonPlan } from '../types';
@@ -106,10 +105,8 @@ export default function LessonForm() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-colors duration-300"
+      <div 
+        className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-colors duration-300 animate-in fade-in slide-in-from-bottom-4 duration-500"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 bg-blue-50 dark:bg-slate-900 border-b border-blue-100 dark:border-slate-800 transition-colors duration-300">
@@ -432,7 +429,7 @@ export default function LessonForm() {
             </div>
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
