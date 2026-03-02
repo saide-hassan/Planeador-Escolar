@@ -25,38 +25,38 @@ export const downloadDocx = (plan: LessonPlan) => {
       tableHeader: true,
       children: [
         new TableCell({
-          children: [new Paragraph({ text: "Tempo", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Tempo", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 10, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
           verticalAlign: VerticalAlign.CENTER,
         }),
         new TableCell({
-          children: [new Paragraph({ text: "Função Didáctica", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Função Didáctica", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 15, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
           verticalAlign: VerticalAlign.CENTER,
         }),
         new TableCell({
-          children: [new Paragraph({ text: "Conteúdo", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Conteúdo", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 20, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
           verticalAlign: VerticalAlign.CENTER,
         }),
         new TableCell({
-          children: [new Paragraph({ text: "Actividades", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Actividades", bold: true })], alignment: AlignmentType.CENTER })],
           columnSpan: 2, // Spans Professor and Aluno
           width: { size: 35, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
           verticalAlign: VerticalAlign.CENTER,
         }),
         new TableCell({
-          children: [new Paragraph({ text: "Métodos", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Métodos", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 10, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
           verticalAlign: VerticalAlign.CENTER,
         }),
         new TableCell({
-          children: [new Paragraph({ text: "Obs.", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Obs.", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 10, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
           verticalAlign: VerticalAlign.CENTER,
@@ -70,12 +70,12 @@ export const downloadDocx = (plan: LessonPlan) => {
         new TableCell({ children: [], width: { size: 15, type: WidthType.PERCENTAGE } }), // Empty for Função
         new TableCell({ children: [], width: { size: 20, type: WidthType.PERCENTAGE } }), // Empty for Conteúdo
         new TableCell({
-          children: [new Paragraph({ text: "Professor", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Professor", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 17.5, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
         }),
         new TableCell({
-          children: [new Paragraph({ text: "Aluno", bold: true, alignment: AlignmentType.CENTER })],
+          children: [new Paragraph({ children: [new TextRun({ text: "Aluno", bold: true })], alignment: AlignmentType.CENTER })],
           width: { size: 17.5, type: WidthType.PERCENTAGE },
           shading: { fill: tableHeaderColor },
         }),
