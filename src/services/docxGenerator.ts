@@ -90,30 +90,37 @@ export const downloadDocx = (plan: LessonPlan) => {
           new TableCell({
             children: [new Paragraph({ text: func.time, alignment: AlignmentType.CENTER })],
             verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
           new TableCell({
             children: [new Paragraph({ text: func.name, alignment: AlignmentType.CENTER })],
             verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
           new TableCell({
             children: [new Paragraph({ text: func.content, alignment: AlignmentType.JUSTIFIED })],
             verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
           new TableCell({
             children: [new Paragraph({ text: func.activities.teacher, alignment: AlignmentType.JUSTIFIED })],
             verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
           new TableCell({
             children: [new Paragraph({ text: func.activities.student, alignment: AlignmentType.JUSTIFIED })],
             verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
           new TableCell({
             children: [new Paragraph({ text: func.method, alignment: AlignmentType.CENTER })],
             verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
           new TableCell({
             children: [new Paragraph({ text: func.obs || "" })],
             verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
           }),
         ],
       })

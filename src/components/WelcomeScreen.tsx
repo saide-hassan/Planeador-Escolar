@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Linkedin, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -65,17 +65,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           className="mt-auto md:mt-12 flex flex-col items-center gap-4 animate-in fade-in duration-1000 delay-1000 fill-mode-backwards opacity-60 hover:opacity-100 transition-opacity"
         >
           <div className="flex items-center gap-3 text-sm md:text-base text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-full border border-transparent hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all">
-            <span className="font-medium">Desenvolvido por Saide Assane</span>
-            <span className="text-slate-300 dark:text-slate-600">•</span>
-            <a
-              href="https://www.linkedin.com/in/saidehassan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
-            >
-              <Linkedin className="w-4 h-4 md:w-5 md:h-5" />
-              <span>LinkedIn</span>
-            </a>
+            <span className="font-medium">© {new Date().getFullYear()} Planificador Escolar. Todos os direitos reservados.</span>
           </div>
         </div>
       </div>
