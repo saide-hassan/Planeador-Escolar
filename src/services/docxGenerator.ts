@@ -274,15 +274,65 @@ export const downloadDocx = (plan: LessonPlan) => {
           // Content Summary Section
           new Paragraph({
             text: "Apontamentos",
-            heading: "Heading2",
+            heading: "Heading1", // Promoted to Heading1 for main section
             alignment: AlignmentType.CENTER,
             spacing: { after: 200 },
           }),
-          new Paragraph({
-            text: plan.contentSummary,
-            alignment: AlignmentType.JUSTIFIED,
-            spacing: { after: 400 },
+          
+          // Parse Markdown-like content summary
+          ...plan.contentSummary.split('\n').map(line => {
+            const cleanLine = line.trim();
+            if (!cleanLine) return new Paragraph({ text: "", spacing: { after: 120 } });
+
+            // Headings
+            if (cleanLine.startsWith('# ')) {
+              return new Paragraph({
+                text: cleanLine.replace(/^#\s+/, ''),
+                heading: "Heading2",
+                spacing: { before: 240, after: 120 },
+              });
+            }
+            if (cleanLine.startsWith('## ')) {
+              return new Paragraph({
+                text: cleanLine.replace(/^##\s+/, ''),
+                heading: "Heading3",
+                spacing: { before: 200, after: 100 },
+              });
+            }
+            if (cleanLine.startsWith('### ')) {
+              return new Paragraph({
+                text: cleanLine.replace(/^###\s+/, ''),
+                heading: "Heading4",
+                spacing: { before: 160, after: 80 },
+              });
+            }
+
+            // List items
+            if (cleanLine.match(/^[-*]\s+/)) {
+              return new Paragraph({
+                text: cleanLine.replace(/^[-*]\s+/, ''),
+                bullet: { level: 0 },
+                alignment: AlignmentType.JUSTIFIED,
+              });
+            }
+            if (cleanLine.match(/^\d+\.\s+/)) {
+              return new Paragraph({
+                text: cleanLine.replace(/^\d+\.\s+/, ''),
+                // numbering is complex in docx, treating as text for simplicity or bullet
+                bullet: { level: 0 }, // Using bullet for simplicity, or just text
+                alignment: AlignmentType.JUSTIFIED,
+              });
+            }
+
+            // Regular paragraph
+            return new Paragraph({
+              text: cleanLine,
+              alignment: AlignmentType.JUSTIFIED,
+              spacing: { after: 120, line: 360 }, // 1.5 line spacing (240 = 1.0)
+            });
           }),
+
+          new Paragraph({ text: "", spacing: { after: 400 } }), // Spacer after summary
 
           // Exercises Section (if any)
           ...(plan.exercisesList && plan.exercisesList.length > 0 ? [

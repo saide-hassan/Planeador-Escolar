@@ -5,7 +5,7 @@ import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 
-import ReactMarkdown from 'react-markdown';
+
 
 export default function LessonForm() {
   const [loading, setLoading] = useState(false);
@@ -469,65 +469,7 @@ export default function LessonForm() {
                 </div>
               </div>
 
-              {/* Apontamentos Section */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-500" />
-                  Apontamentos
-                </h3>
-                <div className="prose prose-slate dark:prose-invert max-w-none">
-                  <ReactMarkdown
-                    components={{
-                      h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-slate-900 dark:text-white mt-8 mb-4 block border-b border-slate-200 dark:border-slate-800 pb-2" {...props} />,
-                      h2: ({node, ...props}) => <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mt-6 mb-3 block" {...props} />,
-                      h3: ({node, ...props}) => <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mt-5 mb-2 block" {...props} />,
-                      p: ({node, ...props}) => <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed text-justify mb-4" {...props} />,
-                      ul: ({node, ...props}) => <ul className="list-disc list-inside mb-4 space-y-1 text-slate-700 dark:text-slate-300" {...props} />,
-                      ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-4 space-y-1 text-slate-700 dark:text-slate-300" {...props} />,
-                      li: ({node, ...props}) => <li className="ml-4" {...props} />,
-                      strong: ({node, ...props}) => <strong className="font-bold text-slate-900 dark:text-white" {...props} />,
-                    }}
-                  >
-                    {generatedPlan.contentSummary}
-                  </ReactMarkdown>
-                </div>
-              </div>
 
-              {/* Exercises Section */}
-              {generatedPlan.exercisesList && generatedPlan.exercisesList.length > 0 && (
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                    <Check className="w-5 h-5 text-emerald-500" />
-                    Exercícios
-                  </h3>
-                  <ul className="space-y-3">
-                    {generatedPlan.exercisesList.map((exercise, index) => (
-                      <li key={index} className="flex gap-3 text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                        <span className="font-bold text-slate-400 select-none">{index + 1}.</span>
-                        <span>{exercise}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Homework Section */}
-              {generatedPlan.homeworkList && generatedPlan.homeworkList.length > 0 && (
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-indigo-500" />
-                    Trabalho Para Casa (TPC)
-                  </h3>
-                  <ul className="space-y-3">
-                    {generatedPlan.homeworkList.map((homework, index) => (
-                      <li key={index} className="flex gap-3 text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
-                        <span className="font-bold text-slate-400 select-none">{index + 1}.</span>
-                        <span>{homework}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           )}
         </div>
