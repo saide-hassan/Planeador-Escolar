@@ -37,8 +37,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       await signInWithGoogle();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed", error);
+      if (error.code === 'auth/unauthorized-domain') {
+        alert(
+          "Erro: Domínio não autorizado no Firebase.\n\n" +
+          "Por favor, adicione este domínio (" + window.location.hostname + ") no Console do Firebase > Authentication > Configurações > Domínios autorizados."
+        );
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        // User closed popup, ignore
+      } else {
+        alert("Falha no login: " + (error.message || "Erro desconhecido"));
+      }
     }
   };
 

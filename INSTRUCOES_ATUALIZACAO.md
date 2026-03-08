@@ -43,6 +43,12 @@ VITE_FIREBASE_APP_ID=seu_app_id
     *   `netlify.toml` (Garante que o site não dê erro 404 ao recarregar páginas)
 2.  Faça o push para o GitHub.
 
+## 5. Erro Comum: Domínio Não Autorizado
+Se você ver o erro `auth/unauthorized-domain` ao tentar logar:
+1.  Vá no [Console do Firebase](https://console.firebase.google.com/).
+2.  **Authentication** > **Configurações** (Settings) > **Domínios autorizados**.
+3.  Adicione o domínio do seu site no Netlify (ex: `meu-site.netlify.app`).
+
 ## 4. Testar
 Assim que o Netlify terminar o deploy (geralmente leva 1-2 minutos):
 1.  Abra seu site.
