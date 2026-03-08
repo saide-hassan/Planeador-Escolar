@@ -147,8 +147,18 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
       setGeneratedPlan(plan);
       savePlan(plan);
     } catch (err: any) {
-      const errorMessage = err?.message || 'Ocorreu um erro desconhecido.';
-      setError(`Erro: ${errorMessage}`);
+      let errorMessage = err?.message || 'Ocorreu um erro desconhecido.';
+      
+      // Check for common API errors and provide friendly messages
+      if (errorMessage.includes('"code":503') || errorMessage.includes('503') || errorMessage.includes('overloaded')) {
+         errorMessage = "O serviço de IA está com alta demanda no momento. Por favor, aguarde alguns instantes e tente novamente.";
+      } else if (errorMessage.includes('"code":429') || errorMessage.includes('429')) {
+         errorMessage = "Muitas solicitações recentes. Por favor, aguarde um momento antes de tentar novamente.";
+      } else if (errorMessage.includes('SAFETY')) {
+         errorMessage = "O conteúdo gerado foi bloqueado pelos filtros de segurança. Tente reformular o tema.";
+      }
+
+      setError(errorMessage);
       console.error("Detalhes do erro:", err);
     } finally {
       setLoading(false);

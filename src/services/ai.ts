@@ -13,24 +13,25 @@ const getAiClient = () => {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Helper function to generate content with retry logic
-async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 3): Promise<any> {
+async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 5): Promise<any> {
   for (let i = 0; i < retries; i++) {
     try {
-      return await ai.models.generateContent({
+      const response = await ai.models.generateContent({
         model: model,
         contents: contents,
         config: {
           responseMimeType: "application/json",
         }
       });
+      return response;
     } catch (error: any) {
       // Check for 503 Service Unavailable or 429 Too Many Requests
       if (error?.status === 503 || error?.code === 503 || error?.status === 429 || error?.code === 429) {
         console.warn(`Tentativa ${i + 1} falhou com erro ${error.status || error.code}. Tentando novamente...`);
         if (i === retries - 1) throw error; // If last attempt, throw error
         
-        // Exponential backoff: 2s, 4s, 8s
-        await delay(2000 * Math.pow(2, i));
+        // Exponential backoff: 3s, 6s, 12s, 24s, 48s
+        await delay(3000 * Math.pow(2, i));
       } else {
         throw error; // Throw other errors immediately
       }
@@ -39,7 +40,8 @@ async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents
 }
 
 export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
-  const model = "gemini-3-flash-preview";
+  // Using gemini-2.5-flash for better stability and speed
+  const model = "gemini-2.5-flash";
   const ai = getAiClient();
   
   const prompt = `

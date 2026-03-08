@@ -79,7 +79,7 @@ export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleThem
       <div 
         className="absolute bottom-2 left-0 w-full flex flex-col items-center gap-4 animate-in fade-in duration-1000 delay-1000 fill-mode-backwards opacity-70 hover:opacity-100 transition-opacity z-50"
       >
-        <div className="flex items-center gap-3 text-sm md:text-base text-slate-500 dark:text-slate-400 px-4 py-2 rounded-full border border-transparent hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center">
+        <div className="flex items-center gap-3 text-lg md:text-xl text-slate-500 dark:text-slate-400 px-4 py-2 rounded-full border border-transparent hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center">
           <span className="font-medium">
             © {new Date().getFullYear()} - Todos os direitos reservados a <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Saide Hassan</a>
           </span>
