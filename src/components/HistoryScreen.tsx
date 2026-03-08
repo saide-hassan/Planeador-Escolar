@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { LessonPlan } from '../types';
-import { getHistory, deletePlan, clearHistory } from '../services/historyService';
+import { getPlans, deletePlan, deleteAllPlans } from '../services/planService';
 import { downloadDocx } from '../services/docxGenerator';
-import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, Sun, Moon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -15,11 +15,24 @@ interface HistoryScreenProps {
 
 export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }: HistoryScreenProps) {
   const [plans, setPlans] = useState<LessonPlan[]>([]);
+  const [loading, setLoading] = useState(true);
   const [confirmAction, setConfirmAction] = useState<{ type: 'delete' | 'clear', id?: string } | null>(null);
 
   useEffect(() => {
-    setPlans(getHistory());
+    loadPlans();
   }, []);
+
+  const loadPlans = async () => {
+    setLoading(true);
+    try {
+      const data = await getPlans();
+      setPlans(data);
+    } catch (error) {
+      console.error("Failed to load plans", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDeleteClick = (id: string) => {
     setConfirmAction({ type: 'delete', id });
@@ -29,12 +42,12 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
     setConfirmAction({ type: 'clear' });
   };
 
-  const confirmActionHandler = () => {
+  const confirmActionHandler = async () => {
     if (confirmAction?.type === 'delete' && confirmAction.id) {
-      deletePlan(confirmAction.id);
-      setPlans(getHistory());
+      await deletePlan(confirmAction.id);
+      await loadPlans();
     } else if (confirmAction?.type === 'clear') {
-      clearHistory();
+      await deleteAllPlans();
       setPlans([]);
     }
     setConfirmAction(null);
@@ -95,7 +108,11 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
         </div>
       </div>
 
-      {plans.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        </div>
+      ) : plans.length === 0 ? (
         <div className="text-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-500">
           <div className="bg-slate-100 dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-slate-400" />

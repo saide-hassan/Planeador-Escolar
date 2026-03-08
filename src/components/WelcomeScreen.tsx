@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, Sparkles, History, Sun, Moon } from 'lucide-react';
+import { ArrowRight, Sparkles, History, Sun, Moon, LogIn, LogOut, User } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -9,6 +10,8 @@ interface WelcomeScreenProps {
 }
 
 export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleTheme }: WelcomeScreenProps) {
+  const { user, signIn, signOut } = useAuth();
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 dark:from-slate-950 dark:to-blue-950 p-4 transition-colors duration-500 overflow-hidden">
       {/* Header */}
@@ -18,14 +21,47 @@ export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleThem
           <img src="/logo.svg" alt="Logo" className="w-6 h-6" />
         </div>
 
-        {/* Theme Toggle Right */}
-        <button
-          onClick={toggleTheme}
-          className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
-          aria-label="Alternar tema"
-        >
-          {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-        </button>
+        {/* Right Actions */}
+        <div className="flex items-center gap-3">
+          {user ? (
+            <div className="flex items-center gap-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-1.5 pr-4 rounded-xl border border-white/50 dark:border-slate-700 shadow-lg">
+              {user.photoURL ? (
+                <img src={user.photoURL} alt={user.displayName || 'User'} className="w-8 h-8 rounded-lg" />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                  <User className="w-4 h-4 text-blue-600 dark:text-blue-300" />
+                </div>
+              )}
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-200 hidden sm:block">
+                {user.displayName?.split(' ')[0]}
+              </span>
+              <button
+                onClick={signOut}
+                className="ml-2 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-500 transition-colors"
+                title="Sair"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={signIn}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all font-medium text-sm"
+            >
+              <LogIn className="w-4 h-4" />
+              <span className="hidden sm:inline">Entrar</span>
+            </button>
+          )}
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
+            aria-label="Alternar tema"
+          >
+            {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Background Elements */}
