@@ -37,4 +37,6 @@ export interface LessonPlan extends LessonPlanInput {
   contentSummary: string;
   exercisesList: string[];
   homeworkList: string[];
+  id?: string;
+  createdAt?: string;
 }

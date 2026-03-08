@@ -4,26 +4,24 @@ import { LessonPlanInput, LessonPlan } from '../types';
 import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
+import { savePlan } from '../services/historyService';
 
+interface LessonFormProps {
+  onBack?: () => void;
+  initialData?: LessonPlan | null;
+  darkMode?: boolean;
+  toggleTheme?: () => void;
+}
 
-
-export default function LessonForm() {
+export default function LessonForm({ onBack, initialData, darkMode, toggleTheme }: LessonFormProps) {
   const [loading, setLoading] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState<LessonPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [darkMode, setDarkMode] = useState(false);
+  // Remove local darkMode state, use prop or default false if not provided (though App provides it)
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<ProcessedFile[]>([]);
   const [processingFile, setProcessingFile] = useState(false);
-
-  // Toggle dark mode class on html element
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   const [schoolType, setSchoolType] = useState('Escola');
   const [schoolName, setSchoolName] = useState('');
@@ -48,7 +46,52 @@ export default function LessonForm() {
     materials: '',
     includeExercises: false,
     includeHomework: false,
+    otherDetails: ''
   });
+
+  // Populate form when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      // Parse school
+      const schoolParts = initialData.school.split(' ');
+      const type = schoolParts[0] === 'Colégio' ? 'Colégio' : 'Escola';
+      const name = initialData.school.replace(/^(Colégio|Escola)\s*/, "");
+      
+      setSchoolType(type);
+      setSchoolName(name);
+
+      // Parse unit
+      const unitParts = initialData.unit.split(':');
+      let uNum = 'I';
+      let uName = initialData.unit;
+      if (unitParts.length > 1) {
+        uNum = unitParts[0].trim();
+        uName = unitParts.slice(1).join(':').trim();
+      }
+      setUnitNumber(uNum);
+      setUnitName(uName);
+
+      setFormData({
+        school: initialData.school,
+        subject: initialData.subject,
+        date: initialData.date,
+        unit: initialData.unit,
+        grade: initialData.grade,
+        topic: initialData.topic,
+        duration: initialData.duration,
+        teacher: initialData.teacher,
+        materials: initialData.materials,
+        includeExercises: initialData.includeExercises,
+        includeHomework: initialData.includeHomework,
+        otherDetails: initialData.otherDetails || ''
+      });
+
+      // Attachments are not easily restorable unless we store the base64 in history (we do!)
+      if (initialData.attachments) {
+        setAttachments(initialData.attachments);
+      }
+    }
+  }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -94,7 +137,15 @@ export default function LessonForm() {
         unit: `${unitNumber}: ${unitName}`,
         attachments: attachments
       });
+
+      // If editing, preserve ID and createdAt
+      if (initialData?.id) {
+        plan.id = initialData.id;
+        plan.createdAt = initialData.createdAt;
+      }
+
       setGeneratedPlan(plan);
+      savePlan(plan);
     } catch (err: any) {
       const errorMessage = err?.message || 'Ocorreu um erro desconhecido.';
       setError(`Erro: ${errorMessage}`);
@@ -109,24 +160,45 @@ export default function LessonForm() {
       <div 
         className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-900/5 dark:shadow-black/50 overflow-hidden border border-white/50 dark:border-slate-800 transition-colors duration-300 animate-in fade-in slide-in-from-bottom-4 duration-500"
       >
-        {/* Minimal Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-4">
-            <div className="bg-blue-50 dark:bg-blue-900/30 p-2 rounded-xl">
-              <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
+        {/* Header */}
+        <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              {onBack && (
+                <button 
+                  onClick={onBack}
+                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  title="Voltar"
+                >
+                  <ChevronDown className="w-5 h-5 rotate-90 text-slate-500" />
+                </button>
+              )}
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-2 rounded-xl">
+                <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Novo Plano</h2>
-            </div>
+            
+            {toggleTheme && (
+              <button
+                onClick={toggleTheme}
+                className="p-2.5 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700"
+                aria-label="Alternar tema"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            )}
           </div>
-          
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2.5 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700"
-            aria-label="Alternar tema"
-          >
-            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
+
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+              {initialData ? 'Editar Plano' : 'Novo Plano'}
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+              {initialData 
+                ? 'Atualize as informações abaixo para regenerar o plano.' 
+                : 'Preencha os dados abaixo para gerar um novo plano de aula.'}
+            </p>
+          </div>
         </div>
 
         <div className="p-8 md:p-10">
