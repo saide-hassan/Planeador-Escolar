@@ -155,7 +155,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
         },
         ... (para as outras 3 funções)
       ],
-      "contentSummary": "Texto dos apontamentos para o aluno copiar. IMPORTANTE: Use Markdown para formatar. Use # para Títulos, ## para Subtítulos e parágrafos bem estruturados. O texto deve ser EXTENSO e detalhado, cobrindo profundamente o tema, mas mantendo um nível de linguagem perfeitamente adequado à classe (${input.grade}) e à idade dos alunos. Não resuma excessivamente; explique os conceitos com clareza e profundidade pedagógica.",
+      "contentSummary": "Texto dos apontamentos para o aluno copiar. IMPORTANTE: NÃO use formatação Markdown (NÃO use asteriscos *, cardinais #, ou sublinhados). Use APENAS texto simples com quebras de linha para separar os parágrafos. O texto deve ser EXTENSO e detalhado, cobrindo profundamente o tema, mas mantendo um nível de linguagem perfeitamente adequado à classe (${input.grade}) e à idade dos alunos. Não resuma excessivamente; explique os conceitos com clareza e profundidade pedagógica.",
       "exercisesList": ["Exercício 1...", "Exercício 2...", "Exercício 3..."],
       "homeworkList": ["TPC 1...", "TPC 2..."]
     }

@@ -494,7 +494,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col md:flex-row items-center md:justify-end pt-6 gap-4 border-t border-slate-100 dark:border-slate-800 mt-8">
+            <div className="flex flex-col md:flex-row items-center md:items-start md:justify-end pt-6 gap-4 border-t border-slate-100 dark:border-slate-800 mt-8">
               <button
                 type="submit"
                 disabled={loading}
@@ -536,9 +536,9 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
           )}
 
           {generatedPlan && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300 mt-8">
               <div 
-                className="mt-8 p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 flex items-start gap-4"
+                className="p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 flex items-start gap-4"
               >
                 <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
                   <FileText className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
@@ -551,7 +551,11 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
                 </div>
               </div>
 
-
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                  A IA pode cometer erros. Considere verificar as informações geradas.
+                </p>
+              </div>
             </div>
           )}
         </div>
