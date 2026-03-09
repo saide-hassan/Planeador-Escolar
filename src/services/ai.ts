@@ -13,24 +13,31 @@ const getAiClient = () => {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Helper function to generate content with retry logic
-async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 5): Promise<any> {
+async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 3): Promise<any> {
   for (let i = 0; i < retries; i++) {
     try {
-      const response = await ai.models.generateContent({
+      // Add a timeout of 45 seconds to prevent hanging indefinitely
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Timeout: A IA demorou muito para responder.")), 45000)
+      );
+      
+      const apiPromise = ai.models.generateContent({
         model: model,
         contents: contents,
         config: {
           responseMimeType: "application/json",
         }
       });
+
+      const response = await Promise.race([apiPromise, timeoutPromise]);
       return response;
     } catch (error: any) {
-      // Check for 503 Service Unavailable or 429 Too Many Requests
-      if (error?.status === 503 || error?.code === 503 || error?.status === 429 || error?.code === 429) {
-        console.warn(`Tentativa ${i + 1} falhou com erro ${error.status || error.code}. Tentando novamente...`);
+      // Check for 503 Service Unavailable or 429 Too Many Requests or Timeout
+      if (error?.status === 503 || error?.code === 503 || error?.status === 429 || error?.code === 429 || error?.message?.includes("Timeout")) {
+        console.warn(`Tentativa ${i + 1} falhou com erro ${error.status || error.code || error.message}. Tentando novamente...`);
         if (i === retries - 1) throw error; // If last attempt, throw error
         
-        // Exponential backoff: 3s, 6s, 12s, 24s, 48s
+        // Exponential backoff: 3s, 6s
         await delay(3000 * Math.pow(2, i));
       } else {
         throw error; // Throw other errors immediately
@@ -40,8 +47,8 @@ async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents
 }
 
 export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
-  // Using gemini-2.5-flash for better stability and speed
-  const model = "gemini-2.5-flash";
+  // Using gemini-3-flash-preview for better stability and speed
+  const model = "gemini-3-flash-preview";
   const ai = getAiClient();
   
   const prompt = `
@@ -184,8 +191,18 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
 
     if (!text) throw new Error("A IA retornou uma resposta vazia.");
 
-    // Remove markdown code blocks if present
-    text = text.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+    // Extract JSON block if it exists
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      text = jsonMatch[1].trim();
+    } else {
+      // Fallback: try to find the first { and last }
+      const firstBrace = text.indexOf('{');
+      const lastBrace = text.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        text = text.substring(firstBrace, lastBrace + 1);
+      }
+    }
 
     try {
       const data = JSON.parse(text);

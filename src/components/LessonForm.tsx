@@ -4,7 +4,7 @@ import { LessonPlanInput, LessonPlan } from '../types';
 import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
-import { savePlan } from '../services/planService';
+import { savePlan } from '../services/historyService';
 
 interface LessonFormProps {
   onBack?: () => void;

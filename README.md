@@ -17,19 +17,13 @@ Este projeto é uma aplicação web para professores criarem planos de aula, apo
     *   **Publish directory:** `dist`
 
 ### 3. Variáveis de Ambiente (IMPORTANTE)
-Antes de clicar em "Deploy", você **DEVE** configurar as variáveis de ambiente no painel do Netlify. Sem elas, o login e a IA não funcionarão.
+Antes de clicar em "Deploy", você **DEVE** configurar as variáveis de ambiente no painel do Netlify. Sem elas, a IA não funcionará.
 
-Vá em **Site settings > Environment variables** e adicione as seguintes chaves:
+Vá em **Site settings > Environment variables** e adicione a seguinte chave:
 
 | Chave | Descrição | Onde encontrar |
 |-------|-----------|----------------|
 | `GEMINI_API_KEY` | Chave da API do Google Gemini | [Google AI Studio](https://aistudio.google.com/) |
-| `VITE_FIREBASE_API_KEY` | Chave da API do Firebase | Console do Firebase > Configurações do Projeto |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Domínio de autenticação | Console do Firebase |
-| `VITE_FIREBASE_PROJECT_ID` | ID do projeto | Console do Firebase |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Bucket de armazenamento | Console do Firebase |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | ID do remetente | Console do Firebase |
-| `VITE_FIREBASE_APP_ID` | ID do aplicativo | Console do Firebase |
 
 ### 4. Finalizar
 Após configurar as variáveis, clique em **"Deploy site"**. O Netlify fará o build e publicará seu site em alguns minutos.
@@ -40,3 +34,7 @@ Após configurar as variáveis, clique em **"Deploy site"**. O Netlify fará o b
 2.  Instale as dependências: `npm install`
 3.  Crie um arquivo `.env` na raiz com as variáveis acima.
 4.  Inicie o servidor de desenvolvimento: `npm run dev`
+
+## 🐛 Resolução de Problemas
+*   **"Fica a processar, não gera o plano":** Isso geralmente acontece se a API do Gemini demorar muito para responder ou se o formato da resposta for inválido. O aplicativo agora inclui um limite de tempo (timeout de 45s) e um sistema mais robusto para extrair o plano gerado, evitando que fique travado.
+

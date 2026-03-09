@@ -9,7 +9,6 @@ import WelcomeScreen from './components/WelcomeScreen';
 import HistoryScreen from './components/HistoryScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LessonPlan } from './types';
-import { AuthProvider } from './contexts/AuthContext';
 
 export default function App() {
   const [view, setView] = useState<'welcome' | 'form' | 'history'>('welcome');
@@ -51,39 +50,37 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950 py-8 transition-colors duration-500">
-          {view === 'welcome' && (
-            <WelcomeScreen 
-              onStart={() => {
-                setEditingPlan(null);
-                setView('form');
-              }} 
-              onHistory={() => setView('history')}
-              darkMode={darkMode}
-              toggleTheme={toggleTheme}
-            />
-          )}
-          {view === 'form' && (
-            <div key="main-content">
-              <LessonForm 
-                onBack={() => setView('welcome')} 
-                initialData={editingPlan}
-                darkMode={darkMode}
-                toggleTheme={toggleTheme}
-              />
-            </div>
-          )}
-          {view === 'history' && (
-            <HistoryScreen 
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950 py-8 transition-colors duration-500">
+        {view === 'welcome' && (
+          <WelcomeScreen 
+            onStart={() => {
+              setEditingPlan(null);
+              setView('form');
+            }} 
+            onHistory={() => setView('history')}
+            darkMode={darkMode}
+            toggleTheme={toggleTheme}
+          />
+        )}
+        {view === 'form' && (
+          <div key="main-content">
+            <LessonForm 
               onBack={() => setView('welcome')} 
-              onEdit={handleEdit}
+              initialData={editingPlan}
               darkMode={darkMode}
               toggleTheme={toggleTheme}
             />
-          )}
-        </div>
-      </AuthProvider>
+          </div>
+        )}
+        {view === 'history' && (
+          <HistoryScreen 
+            onBack={() => setView('welcome')} 
+            onEdit={handleEdit}
+            darkMode={darkMode}
+            toggleTheme={toggleTheme}
+          />
+        )}
+      </div>
     </ErrorBoundary>
   );
 }
