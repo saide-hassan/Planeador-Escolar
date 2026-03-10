@@ -129,11 +129,15 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
     
     ${input.includeExercises ? `
     4. IMPORTANTE: Na fase de "Domínio e Consolidação", você DEVE incluir uma lista de 3 a 5 exercícios práticos relacionados ao tema para os alunos resolverem na aula. Liste-os explicitamente no campo "Conteúdo" ou "Actividades do Professor".
-    ` : ''}
+    ` : `
+    4. IMPORTANTE: NÃO inclua exercícios práticos na fase de "Domínio e Consolidação" ou em qualquer outra parte do plano. O professor não solicitou exercícios para esta aula.
+    `}
 
     ${input.includeHomework ? `
     5. IMPORTANTE: Na fase de "Controlo e Avaliação", você DEVE incluir explicitamente um TPC (Trabalho Para Casa) com 2 a 3 questões ou tarefas para os alunos. Liste-os no campo "Conteúdo" ou "Actividades do Professor".
-    ` : ''}
+    ` : `
+    5. IMPORTANTE: NÃO inclua TPC (Trabalho Para Casa) na fase de "Controlo e Avaliação" ou em qualquer outra parte do plano. O professor não solicitou TPC para esta aula.
+    `}
 
     6. O conteúdo deve ser adequado à classe (${input.grade}) e restringir-se ESTRITAMENTE ao tema fornecido (${input.topic}). Não aborde outros assuntos não solicitados.
     7. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
@@ -156,8 +160,8 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
         ... (para as outras 3 funções)
       ],
       "contentSummary": "Texto dos apontamentos para o aluno copiar. IMPORTANTE: NÃO use formatação Markdown (NÃO use asteriscos *, cardinais #, ou sublinhados). Use APENAS texto simples com quebras de linha para separar os parágrafos. O texto deve ser EXTENSO e detalhado, cobrindo profundamente o tema, mas mantendo um nível de linguagem perfeitamente adequado à classe (${input.grade}) e à idade dos alunos. Não resuma excessivamente; explique os conceitos com clareza e profundidade pedagógica.",
-      "exercisesList": ["Exercício 1...", "Exercício 2...", "Exercício 3..."],
-      "homeworkList": ["TPC 1...", "TPC 2..."]
+      "exercisesList": ${input.includeExercises ? '["Exercício 1...", "Exercício 2...", "Exercício 3..."]' : '[]'},
+      "homeworkList": ${input.includeHomework ? '["TPC 1...", "TPC 2..."]' : '[]'}
     }
   `;
 
