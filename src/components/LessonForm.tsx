@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Loader2, FileText, Download, Sparkles, Sun, Moon, Paperclip, X, File as FileIcon, ChevronDown, Check } from 'lucide-react';
+import { Loader2, FileText, Download, Sparkles, Sun, Moon, Paperclip, X, File as FileIcon, ChevronDown, Check, UploadCloud } from 'lucide-react';
 import { LessonPlanInput, LessonPlan } from '../types';
 import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
@@ -53,17 +53,19 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
   useEffect(() => {
     if (initialData) {
       // Parse school
-      const schoolParts = initialData.school.split(' ');
+      const schoolStr = initialData.school || '';
+      const schoolParts = schoolStr.split(' ');
       const type = schoolParts[0] === 'Colégio' ? 'Colégio' : 'Escola';
-      const name = initialData.school.replace(/^(Colégio|Escola)\s*/, "");
+      const name = schoolStr.replace(/^(Colégio|Escola)\s*/, "");
       
       setSchoolType(type);
       setSchoolName(name);
 
       // Parse unit
-      const unitParts = initialData.unit.split(':');
+      const unitStr = initialData.unit || '';
+      const unitParts = unitStr.split(':');
       let uNum = 'I';
-      let uName = initialData.unit;
+      let uName = unitStr;
       if (unitParts.length > 1) {
         uNum = unitParts[0].trim();
         uName = unitParts.slice(1).join(':').trim();
@@ -74,7 +76,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
       setFormData({
         school: initialData.school,
         subject: initialData.subject,
-        date: initialData.date,
+        date: initialData.date ? (initialData.date.includes('T') ? initialData.date.split('T')[0] : initialData.date) : new Date().toISOString().split('T')[0],
         unit: initialData.unit,
         grade: initialData.grade,
         topic: initialData.topic,
@@ -166,53 +168,22 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-8">
-      <div 
-        className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl shadow-blue-900/5 dark:shadow-black/50 overflow-hidden border border-white/50 dark:border-slate-800 transition-colors duration-300 animate-in fade-in slide-in-from-bottom-4 duration-500"
-      >
-        {/* Header */}
-        <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              {onBack && (
-                <button 
-                  onClick={onBack}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                  title="Voltar"
-                >
-                  <ChevronDown className="w-5 h-5 rotate-90 text-slate-500" />
-                </button>
-              )}
-              <div className="bg-blue-50 dark:bg-blue-900/30 p-2 rounded-xl">
-                <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
-              </div>
-            </div>
-            
-            {toggleTheme && (
-              <button
-                onClick={toggleTheme}
-                className="p-2.5 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700"
-                aria-label="Alternar tema"
-              >
-                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
-            )}
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-              {initialData ? 'Editar Plano' : 'Novo Plano'}
-            </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-              {initialData 
-                ? 'Atualize as informações abaixo para regenerar o plano.' 
-                : 'Preencha os dados abaixo para gerar um novo plano de aula.'}
-            </p>
-          </div>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+            {initialData ? 'Editar Plano' : 'Novo Plano'}
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            {initialData 
+              ? 'Atualize as informações abaixo para regenerar o plano.' 
+              : 'Preencha os dados abaixo para gerar um novo plano de aula.'}
+          </p>
         </div>
+      </div>
 
-        <div className="p-8 md:p-10">
-          <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="p-8 md:p-10">
+        <form onSubmit={handleSubmit} className="space-y-8">
             
             {/* Section: Informações Básicas */}
             <div className="space-y-6">
@@ -407,46 +378,66 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
                   
                   {/* Modern File Upload */}
                   <div className="mt-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={processingFile}
-                        className="group flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md"
-                      >
-                        {processingFile ? <Loader2 className="w-4 h-4 animate-spin text-blue-500" /> : <Paperclip className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />}
-                        Anexar Referência
-                      </button>
-                      <span className="text-xs text-slate-400">PDF, DOCX, Imagem (Máx: 4MB)</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Material de Referência (Opcional)
+                      </label>
                     </div>
+                    
+                    <div 
+                      onClick={() => !processingFile && !loading && fileInputRef.current?.click()}
+                      className={`w-full border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+                        processingFile || loading 
+                          ? 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 cursor-not-allowed opacity-70' 
+                          : 'border-slate-300 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 cursor-pointer group'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform ${
+                        processingFile || loading ? 'bg-slate-100 dark:bg-slate-800' : 'bg-emerald-100 dark:bg-emerald-900/50 group-hover:scale-110'
+                      }`}>
+                        {processingFile ? (
+                          <Loader2 className="w-6 h-6 animate-spin text-slate-500 dark:text-slate-400" />
+                        ) : (
+                          <UploadCloud className={`w-6 h-6 ${processingFile || loading ? 'text-slate-500 dark:text-slate-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                        )}
+                      </div>
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        {processingFile ? 'Processando arquivo...' : 'Clique para anexar arquivos'}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                        .docx, .doc, .pdf (Máx 5MB)
+                      </p>
+                    </div>
+                    
                     <input
                       ref={fileInputRef}
                       type="file"
                       accept=".pdf,.docx,.jpg,.jpeg,.png,.txt"
                       onChange={handleFileChange}
+                      multiple
                       className="hidden"
                     />
                     
                     {/* Attachments List */}
                     {attachments.length > 0 && (
-                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                         {attachments.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 group hover:border-blue-200 dark:hover:border-blue-900/30 transition-colors">
+                          <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                             <div className="flex items-center gap-3 overflow-hidden">
-                              <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
-                                <FileIcon className="w-4 h-4 text-blue-500" />
+                              <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
+                                <FileIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                               </div>
-                              <div className="flex flex-col min-w-0">
-                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{file.name}</span>
-                                <span className="text-[10px] text-slate-400 uppercase tracking-wide">
-                                  {file.isText ? 'Texto Extraído' : 'Arquivo Binário'}
-                                </span>
-                              </div>
+                              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
+                                {file.name}
+                              </span>
                             </div>
                             <button
                               type="button"
-                              onClick={() => removeAttachment(index)}
-                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeAttachment(index);
+                              }}
+                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -559,7 +550,6 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 }

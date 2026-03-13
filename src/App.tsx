@@ -4,15 +4,15 @@
  */
 
 import { useState, useEffect } from 'react';
-import LessonForm from './components/LessonForm';
+import GeneratorTabs from './components/GeneratorTabs';
 import WelcomeScreen from './components/WelcomeScreen';
 import HistoryScreen from './components/HistoryScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { LessonPlan } from './types';
+import { HistoryItem } from './types';
 
 export default function App() {
   const [view, setView] = useState<'welcome' | 'form' | 'history'>('welcome');
-  const [editingPlan, setEditingPlan] = useState<LessonPlan | null>(null);
+  const [editingItem, setEditingItem] = useState<HistoryItem | null>(null);
   const [darkMode, setDarkMode] = useState(() => {
     // Check local storage or system preference
     if (typeof window !== 'undefined') {
@@ -41,8 +41,8 @@ export default function App() {
     updateThemeColor();
   }, [darkMode]);
 
-  const handleEdit = (plan: LessonPlan) => {
-    setEditingPlan(plan);
+  const handleEdit = (item: HistoryItem) => {
+    setEditingItem(item);
     setView('form');
   };
 
@@ -54,7 +54,7 @@ export default function App() {
         {view === 'welcome' && (
           <WelcomeScreen 
             onStart={() => {
-              setEditingPlan(null);
+              setEditingItem(null);
               setView('form');
             }} 
             onHistory={() => setView('history')}
@@ -64,9 +64,9 @@ export default function App() {
         )}
         {view === 'form' && (
           <div key="main-content">
-            <LessonForm 
+            <GeneratorTabs 
               onBack={() => setView('welcome')} 
-              initialData={editingPlan}
+              initialData={editingItem}
               darkMode={darkMode}
               toggleTheme={toggleTheme}
             />

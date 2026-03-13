@@ -32,6 +32,7 @@ export interface DidacticFunction {
 }
 
 export interface LessonPlan extends LessonPlanInput {
+  type?: 'lesson';
   objectives: string;
   didacticFunctions: DidacticFunction[];
   contentSummary: string;
@@ -40,3 +41,47 @@ export interface LessonPlan extends LessonPlanInput {
   id?: string;
   createdAt?: string;
 }
+
+export interface EvaluationInput {
+  evaluationType: string; // ex: ACS 1, ACS 2, ACS 3, AP
+  questionType: 'Escolha Múltipla' | 'Perguntas Abertas' | 'Preenchimento de Lacunas' | 'Ambos';
+  numQuestions: number;
+  otherDetails?: string;
+  schoolType: 'Escola' | 'Colégio';
+  schoolName: string;
+  topics: string;
+  grade: string;
+  term: string;
+  subject: string;
+  duration: string;
+  date: string;
+  classes: string;
+  teacher: string;
+  attachments?: {
+    name: string;
+    type: string;
+    data: string;
+    isText: boolean;
+  }[];
+}
+
+export interface EvaluationQuestion {
+  number: number;
+  knowledgeLevel: string;
+  content: string;
+  objective: string;
+  question: string;
+  possibleAnswer: string;
+  partialScore: number;
+  totalScore: number;
+}
+
+export interface Evaluation extends EvaluationInput {
+  type?: 'evaluation';
+  questions: EvaluationQuestion[];
+  id?: string;
+  createdAt?: string;
+}
+
+export type HistoryItem = LessonPlan | Evaluation;
+

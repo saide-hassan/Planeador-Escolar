@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { LessonPlan, LessonPlanInput } from "../types";
+import { LessonPlan, LessonPlanInput, Evaluation, EvaluationInput } from "../types";
 
 const getAiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -141,6 +141,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
 
     6. O conteúdo deve ser adequado à classe (${input.grade}) e restringir-se ESTRITAMENTE ao tema fornecido (${input.topic}). Não aborde outros assuntos não solicitados.
     7. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
+    8. Não coloque os apontamentos em markdowns, pelo que, não adicione asteriscos (* ou **) no texto.
 
     Retorne APENAS um JSON válido com a seguinte estrutura, sem markdown ou texto adicional:
     {
@@ -212,6 +213,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
       const data = JSON.parse(text);
       return {
         ...input,
+        type: 'lesson',
         objectives: data.objectives,
         didacticFunctions: data.didacticFunctions,
         contentSummary: data.contentSummary || "",
@@ -224,7 +226,116 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
     }
   } catch (error: any) {
     console.error("Erro ao gerar plano de aula:", error);
-    // Repassar a mensagem de erro original para a UI
+    throw error;
+  }
+}
+
+export async function generateEvaluation(input: EvaluationInput): Promise<Evaluation> {
+  const model = "gemini-3-flash-preview";
+  const ai = getAiClient();
+  
+  const prompt = `
+    Você é um especialista em pedagogia com vasta experiência no currículo moçambicano (1ª à 12ª classe).
+    Sua tarefa é criar uma avaliação e a respectiva grelha de correcção com base nos seguintes dados fornecidos pelo professor:
+
+    Escola: ${input.schoolType} ${input.schoolName}
+    Professor: ${input.teacher}
+    Disciplina: ${input.subject}
+    Classe: ${input.grade}
+    Trimestre: ${input.term}
+    Tipo de Avaliação: ${input.evaluationType}
+    Duração: ${input.duration} minutos
+    Data: ${input.date}
+    Turmas: ${input.classes}
+    Tópicos a cobrir: ${input.topics}
+    Tipo de Questões: ${input.questionType}
+    Número de Questões: ${input.numQuestions}
+    ${input.otherDetails ? `Instruções específicas: ${input.otherDetails}` : ''}
+
+    Requisitos Obrigatórios:
+    1. A avaliação deve ser estritamente baseada nos tópicos fornecidos.
+    2. O número de questões deve ser exatamente ${input.numQuestions}.
+    3. O tipo de questões deve respeitar a escolha: ${input.questionType}.
+    4. A soma total das cotações (Cotação Total) de todas as perguntas deve ser exatamente 20 valores.
+    5. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
+    6. Não coloque os apontamentos em markdowns, pelo que, não adicione asteriscos (* ou **) no texto.
+    7. Para cada questão, forneça os dados necessários para a Grelha de Avaliação:
+       - Nível de Conhecimento (ex: Conhecimento, Compreensão, Aplicação, Análise, Síntese, Avaliação)
+       - Conteúdo (o subtópico específico)
+       - Objectivo (o que se pretende avaliar)
+       - Pergunta (o enunciado da questão)
+       - Resposta Possível (a chave de correcção)
+       - Cotação Parcial (se a pergunta tiver alíneas, indique a cotação de cada uma, ou o mesmo que a total se for única)
+       - Cotação Total (a cotação total da pergunta)
+
+    Retorne APENAS um JSON válido com a seguinte estrutura, sem markdown ou texto adicional:
+    {
+      "questions": [
+        {
+          "number": 1,
+          "knowledgeLevel": "Compreensão",
+          "content": "...",
+          "objective": "...",
+          "question": "...",
+          "possibleAnswer": "...",
+          "partialScore": 2.5,
+          "totalScore": 2.5
+        }
+      ]
+    }
+  `;
+
+  try {
+    const parts: any[] = [
+      { text: prompt }
+    ];
+
+    if (input.attachments && input.attachments.length > 0) {
+      input.attachments.forEach(file => {
+        if (file.isText) {
+          parts.push({ text: `\n\n[ANEXO: ${file.name}]\n${file.data}\n[FIM DO ANEXO]` });
+        } else {
+          parts.push({
+            inlineData: {
+              mimeType: file.type,
+              data: file.data
+            }
+          });
+        }
+      });
+    }
+
+    const response = await generateContentWithRetry(ai, model, { parts });
+
+    let text = response.text;
+    console.log("Resposta bruta da IA:", text);
+
+    if (!text) throw new Error("A IA retornou uma resposta vazia.");
+
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      text = jsonMatch[1].trim();
+    } else {
+      const firstBrace = text.indexOf('{');
+      const lastBrace = text.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        text = text.substring(firstBrace, lastBrace + 1);
+      }
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return {
+        ...input,
+        type: 'evaluation',
+        questions: data.questions
+      };
+    } catch (parseError) {
+      console.error("Erro ao fazer parse do JSON:", parseError);
+      throw new Error("A IA gerou uma resposta inválida. Tente novamente.");
+    }
+  } catch (error: any) {
+    console.error("Erro ao gerar avaliação:", error);
     throw error;
   }
 }
