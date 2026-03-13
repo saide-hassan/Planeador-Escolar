@@ -25,11 +25,11 @@ export default function GeneratorTabs({ onBack, initialData, darkMode, toggleThe
   }, [initialData]);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-800 overflow-hidden transition-all duration-300">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-800 transition-all duration-300 relative">
         
         {/* Header */}
-        <div className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 p-6 md:p-8 flex flex-col gap-6">
+        <div className="sticky top-0 z-50 bg-slate-50/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 p-6 md:p-8 flex flex-col gap-6 rounded-t-3xl">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <button

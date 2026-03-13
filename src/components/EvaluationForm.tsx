@@ -152,14 +152,16 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="px-8 py-8 border-b border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <FileText className="w-6 h-6 text-indigo-500" />
-            Gerar Avaliação
+            {initialData ? 'Editar Avaliação' : 'Nova Avaliação'}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
-            Preencha os dados abaixo para criar uma avaliação personalizada e sua respectiva grelha de correcção.
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            {initialData 
+              ? 'Atualize as informações abaixo para regenerar a avaliação.' 
+              : 'Preencha os dados abaixo para criar uma avaliação personalizada e sua respectiva grelha de correcção.'}
           </p>
         </div>
       </div>
@@ -461,11 +463,11 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
             </div>
           </div>
 
-          <div className="pt-4">
+          <div className="flex flex-col md:flex-row items-center md:items-start md:justify-end pt-6 gap-4 border-t border-slate-100 dark:border-slate-800 mt-8">
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-xl shadow-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:-translate-y-0 disabled:shadow-none"
+              className="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-xl shadow-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:-translate-y-0 disabled:shadow-none"
             >
               {loading ? (
                 <>
