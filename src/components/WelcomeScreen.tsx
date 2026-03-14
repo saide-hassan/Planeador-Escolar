@@ -48,7 +48,7 @@ export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleThem
           <p 
             className="text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-backwards"
           >
-            A ferramenta inteligente para professores modernos. Crie planos de aula, apontamentos e exercícios com o poder da IA.
+            A ferramenta inteligente para professores modernos. Crie Avaliações e Planos de Aula com o poder da IA.
           </p>
         </div>
 

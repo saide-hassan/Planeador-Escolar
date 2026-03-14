@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Loader2, FileText, Download, Sparkles, Sun, Moon, Paperclip, X, File as FileIcon, ChevronDown, Check, UploadCloud } from 'lucide-react';
+import { Loader2, FileText, Download, Sparkles, Sun, Moon, Paperclip, X, File as FileIcon, ChevronDown, Check, UploadCloud, Building2, BookOpen, Sliders } from 'lucide-react';
 import { LessonPlanInput, LessonPlan } from '../types';
 import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
@@ -171,7 +171,8 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-blue-500" />
             {initialData ? 'Editar Plano' : 'Novo Plano'}
           </h2>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
@@ -187,10 +188,14 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
             
             {/* Section: Informações Básicas */}
             <div className="space-y-6">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                Informações da Escola
-              </h3>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Informações da Escola
+                </h3>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -235,10 +240,14 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
 
             {/* Section: Detalhes da Aula */}
             <div className="space-y-6">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                Detalhes da Aula
-              </h3>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Detalhes da Aula
+                </h3>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
@@ -359,10 +368,14 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
 
             {/* Section: Personalização */}
             <div className="space-y-6">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                Personalização
-              </h3>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl text-emerald-600 dark:text-emerald-400">
+                  <Sliders className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Personalização
+                </h3>
+              </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">

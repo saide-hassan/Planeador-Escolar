@@ -42,61 +42,65 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8 max-w-7xl mx-auto relative">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-2 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Voltar</span>
-          </button>
-          
-          {/* Mobile Actions */}
-          <div className="flex items-center gap-2 sm:hidden">
+    <>
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+            <button
+              onClick={onBack}
+              className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-2 -ml-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-medium">Voltar</span>
+            </button>
+            
+            {/* Mobile Actions */}
+            <div className="flex items-center gap-2 sm:hidden">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+              {items.length > 0 && (
+                <button
+                  onClick={handleClearClick}
+                  className="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate text-center sm:text-left flex-1">
+            Histórico
+          </h1>
+
+          {/* Desktop Actions */}
+          <div className="hidden sm:flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
             >
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             {items.length > 0 && (
               <button
                 onClick={handleClearClick}
-                className="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                className="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
+                Limpar Tudo
               </button>
             )}
           </div>
         </div>
-
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate text-center sm:text-left flex-1">
-          Histórico
-        </h1>
-
-        {/* Desktop Actions */}
-        <div className="hidden sm:flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
-          {items.length > 0 && (
-            <button
-              onClick={handleClearClick}
-              className="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-              Limpar Tudo
-            </button>
-          )}
-        </div>
       </div>
 
-      {items.length === 0 ? (
+      <div className="min-h-screen p-4 sm:p-6 md:p-8 pt-36 sm:pt-28 max-w-7xl mx-auto relative">
+        {items.length === 0 ? (
         <div className="text-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-500">
           <div className="bg-slate-100 dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-slate-400" />
@@ -238,5 +242,6 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
         </div>
       )}
     </div>
+    </>
   );
 }
