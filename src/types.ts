@@ -76,8 +76,15 @@ export interface EvaluationQuestion {
   totalScore: number;
 }
 
+export interface ReadingText {
+  title: string;
+  author?: string;
+  paragraphs: string[];
+}
+
 export interface Evaluation extends EvaluationInput {
   type?: 'evaluation';
+  readingText?: ReadingText;
   questions: EvaluationQuestion[];
   id?: string;
   createdAt?: string;

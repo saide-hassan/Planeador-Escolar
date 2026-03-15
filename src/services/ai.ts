@@ -259,7 +259,8 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
     4. A soma total das cotações (Cotação Total) de todas as perguntas deve ser exatamente 20 valores.
     5. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
     6. Não coloque os apontamentos em markdowns, pelo que, não adicione asteriscos (* ou **) no texto.
-    7. Para cada questão, forneça os dados necessários para a Grelha de Avaliação:
+    7. Se for fornecido um texto base para interpretação (especialmente em provas de Português) nos anexos ou tópicos, extraia esse texto e inclua-o no campo "readingText" (com título, autor se houver, e os parágrafos). As perguntas devem começar a partir do número 1, logo abaixo do texto.
+    8. Para cada questão, forneça os dados necessários para a Grelha de Avaliação:
        - Nível de Conhecimento (ex: Conhecimento, Compreensão, Aplicação, Análise, Síntese, Avaliação)
        - Conteúdo (o subtópico específico)
        - Objectivo (o que se pretende avaliar)
@@ -270,6 +271,11 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
 
     Retorne APENAS um JSON válido com a seguinte estrutura, sem markdown ou texto adicional:
     {
+      "readingText": {
+        "title": "Título do Texto",
+        "author": "Autor do Texto (opcional)",
+        "paragraphs": ["Parágrafo 1", "Parágrafo 2"]
+      },
       "questions": [
         {
           "number": 1,
@@ -283,6 +289,7 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
         }
       ]
     }
+    O campo "readingText" é opcional e só deve ser incluído se houver um texto de leitura/interpretação.
   `;
 
   try {
@@ -328,6 +335,7 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
       return {
         ...input,
         type: 'evaluation',
+        readingText: data.readingText,
         questions: data.questions
       };
     } catch (parseError) {
