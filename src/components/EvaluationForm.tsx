@@ -508,17 +508,17 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={handleDownloadEval}
-                className="flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-slate-700 dark:text-slate-200 px-6 py-4 rounded-xl font-semibold transition-all"
+                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-all shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30"
               >
-                <Download className="w-5 h-5" />
-                Baixar Avaliação (.docx)
+                <Download className="w-4 h-4" />
+                Baixar Avaliação
               </button>
               <button
                 onClick={handleDownloadGrid}
-                className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl font-semibold transition-all shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30"
+                className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-all shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30"
               >
-                <Download className="w-5 h-5" />
-                Baixar Grelha (.docx)
+                <Download className="w-4 h-4" />
+                Baixar Grelha
               </button>
             </div>
             

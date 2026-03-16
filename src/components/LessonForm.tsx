@@ -516,17 +516,6 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
                   </>
                 )}
               </button>
-
-              {generatedPlan && (
-                <button
-                  type="button"
-                  onClick={() => downloadDocx(generatedPlan)}
-                  className="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-semibold transition-all shadow-xl shadow-emerald-500/20 hover:shadow-2xl hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-95 animate-in fade-in slide-in-from-bottom-4 duration-300"
-                >
-                  <Download className="w-5 h-5" />
-                  <span>Baixar Word</span>
-                </button>
-              )}
             </div>
           </form>
 
@@ -540,25 +529,32 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
           )}
 
           {generatedPlan && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300 mt-8">
-              <div 
-                className="p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 flex items-start gap-4"
-              >
-                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
-                  <FileText className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+            <div className="mt-10 p-8 bg-white dark:bg-slate-900 rounded-2xl border border-green-200 dark:border-green-900/50 shadow-lg shadow-green-500/5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex flex-col items-center text-center mb-8">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                  <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
-                <div>
-                  <h4 className="font-semibold text-emerald-900 dark:text-emerald-100 text-lg">Sucesso!</h4>
-                  <p className="text-emerald-700 dark:text-emerald-300 mt-1">
-                    O plano de aula foi gerado com sucesso. Clique em "Baixar Word" para salvar o arquivo.
-                  </p>
-                </div>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                  Plano Gerado com Sucesso!
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 max-w-md">
+                  Seu plano de aula está pronto para download.
+                </p>
               </div>
 
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center">
-                <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
-                  A IA pode cometer erros. Considere verificar as informações geradas.
-                </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  type="button"
+                  onClick={() => downloadDocx(generatedPlan)}
+                  className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-all shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30"
+                >
+                  <Download className="w-4 h-4" />
+                  Baixar Plano de Aula
+                </button>
+              </div>
+
+              <div className="mt-8 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/50 rounded-xl text-yellow-800 dark:text-yellow-500 text-sm text-center">
+                A IA pode cometer erros. Considere verificar as informações geradas antes de imprimir.
               </div>
             </div>
           )}

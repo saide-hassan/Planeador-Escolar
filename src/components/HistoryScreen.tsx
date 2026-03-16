@@ -125,7 +125,7 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
                     {item.type === 'evaluation' ? 'Avaliação' : 'Plano de Aula'}
                   </span>
                 </div>
-                <h3 className={`text-lg font-bold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${item.type === 'evaluation' ? 'group-hover:text-purple-600 dark:group-hover:text-purple-400' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'}`}>
+                <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${item.type === 'evaluation' ? 'group-hover:text-purple-600 dark:group-hover:text-purple-400' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'}`}>
                   {item.type === 'evaluation' ? (item as Evaluation).topics : (item as LessonPlan).topic}
                 </h3>
                 <div className="flex flex-wrap gap-2 mb-3">
