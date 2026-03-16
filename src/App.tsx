@@ -11,7 +11,13 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { HistoryItem } from './types';
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'form' | 'history'>('welcome');
+  const [view, setView] = useState<'welcome' | 'form' | 'history'>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'form' || hash === 'history') return hash;
+    }
+    return 'welcome';
+  });
   const [editingItem, setEditingItem] = useState<HistoryItem | null>(null);
   const [darkMode, setDarkMode] = useState(() => {
     // Check local storage or system preference
@@ -22,6 +28,47 @@ export default function App() {
     }
     return false;
   });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'form') {
+        setView('form');
+      } else if (hash === 'history') {
+        setView('history');
+      } else {
+        setView('welcome');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace') {
+        const target = e.target as HTMLElement;
+        const isInput = 
+          target.tagName === 'INPUT' || 
+          target.tagName === 'TEXTAREA' || 
+          target.tagName === 'SELECT' ||
+          target.isContentEditable;
+          
+        if (!isInput) {
+          e.preventDefault();
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            navigateTo('welcome');
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
@@ -41,9 +88,13 @@ export default function App() {
     updateThemeColor();
   }, [darkMode]);
 
+  const navigateTo = (newView: 'welcome' | 'form' | 'history') => {
+    window.location.hash = newView === 'welcome' ? '' : newView;
+  };
+
   const handleEdit = (item: HistoryItem) => {
     setEditingItem(item);
-    setView('form');
+    navigateTo('form');
   };
 
   const toggleTheme = () => setDarkMode(!darkMode);
@@ -55,9 +106,9 @@ export default function App() {
           <WelcomeScreen 
             onStart={() => {
               setEditingItem(null);
-              setView('form');
+              navigateTo('form');
             }} 
-            onHistory={() => setView('history')}
+            onHistory={() => navigateTo('history')}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
@@ -65,7 +116,13 @@ export default function App() {
         {view === 'form' && (
           <div key="main-content">
             <GeneratorTabs 
-              onBack={() => setView('welcome')} 
+              onBack={() => {
+                if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  navigateTo('welcome');
+                }
+              }} 
               initialData={editingItem}
               darkMode={darkMode}
               toggleTheme={toggleTheme}
@@ -74,7 +131,13 @@ export default function App() {
         )}
         {view === 'history' && (
           <HistoryScreen 
-            onBack={() => setView('welcome')} 
+            onBack={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                navigateTo('welcome');
+              }
+            }} 
             onEdit={handleEdit}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
