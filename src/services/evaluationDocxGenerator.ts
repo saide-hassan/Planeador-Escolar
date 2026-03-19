@@ -4,80 +4,71 @@ import { format } from 'date-fns';
 import { Evaluation } from "../types";
 
 export const downloadEvaluationDocx = (evaluation: Evaluation) => {
-  const createLabel = (label: string, value: string) => {
-    return new Paragraph({
-      children: [
-        new TextRun({ text: label, bold: true }),
-        new TextRun({ text: ` ${value}` }),
-      ],
-      spacing: { after: 120 },
-    });
-  };
+  const year = new Date(evaluation.date).getFullYear();
+
+  // Format grade and term to ensure they contain "Classe" and "Trimestre"
+  const formattedGrade = evaluation.grade.toLowerCase().includes('classe') 
+    ? evaluation.grade 
+    : `${evaluation.grade} Classe`;
+    
+  const formattedTerm = evaluation.term.toLowerCase().includes('trimestre') 
+    ? evaluation.term 
+    : `${evaluation.term} Trimestre`;
 
   const doc = new Document({
+    styles: {
+      default: {
+        document: {
+          run: {
+            size: 24, // 12pt
+            color: "000000",
+            font: "Arial",
+          },
+        },
+      },
+    },
     sections: [
       {
         properties: {},
         children: [
           new Paragraph({
-            text: "Avaliação",
-            heading: "Heading1",
+            children: [
+              new TextRun({ text: `${evaluation.schoolType} ${evaluation.schoolName}`, bold: true }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 200 },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({ text: `${evaluation.evaluationType} de ${evaluation.subject} - ${formattedGrade} - ${formattedTerm} - ${year}`, bold: true }),
+            ],
             alignment: AlignmentType.CENTER,
             spacing: { after: 400 },
           }),
-          
-          new Table({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            borders: {
-              top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            },
-            rows: [
-              new TableRow({
-                children: [
-                  new TableCell({ children: [createLabel(evaluation.schoolType + ":", evaluation.schoolName)], columnSpan: 2 }),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({ children: [createLabel("Disciplina:", evaluation.subject)] }),
-                  new TableCell({ children: [createLabel("Data:", format(new Date(evaluation.date), 'dd/MM/yyyy'))] }),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({ children: [createLabel("Classe:", evaluation.grade)] }),
-                  new TableCell({ children: [createLabel("Trimestre:", evaluation.term)] }),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({ children: [createLabel("Tipo de Avaliação:", evaluation.evaluationType)] }),
-                  new TableCell({ children: [createLabel("Duração:", `${evaluation.duration} min`)] }),
-                ],
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({ children: [createLabel("Turmas:", evaluation.classes)] }),
-                  new TableCell({ children: [createLabel("Professor:", evaluation.teacher)] }),
-                ],
-              }),
+          new Paragraph({
+            children: [
+              new TextRun({ text: `Duração: ${evaluation.duration} min`, bold: true }),
             ],
+            alignment: AlignmentType.RIGHT,
+            spacing: { after: 400 },
           }),
-
-          new Paragraph({ text: "", spacing: { after: 400 } }),
 
           ...(evaluation.readingText ? [
             new Paragraph({
-              text: evaluation.readingText.title,
-              heading: "Heading2",
+              children: [
+                new TextRun({ text: "Texto", bold: true }),
+              ],
               alignment: AlignmentType.CENTER,
               spacing: { after: 200 },
             }),
+            ...(evaluation.readingText.title ? [
+              new Paragraph({
+                text: evaluation.readingText.title,
+                heading: "Heading2",
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 200 },
+              }),
+            ] : []),
             ...(evaluation.readingText.author ? [
               new Paragraph({
                 children: [
