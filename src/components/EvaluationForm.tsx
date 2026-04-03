@@ -8,6 +8,7 @@ import { generateEvaluation } from '../services/ai';
 import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/evaluationDocxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { saveItem } from '../services/historyService';
+import { getProfile } from '../services/profileService';
 
 interface EvaluationFormProps {
   onBack?: () => void;
@@ -24,20 +25,22 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
   const [attachments, setAttachments] = useState<ProcessedFile[]>([]);
   const [processingFile, setProcessingFile] = useState(false);
 
+  const profile = getProfile();
+
   const [formData, setFormData] = useState<EvaluationInput>({
     evaluationType: 'ACS 1',
     questionType: 'Ambos',
     numQuestions: 5,
-    schoolType: 'Escola',
-    schoolName: '',
+    schoolType: profile?.schoolType || 'Escola',
+    schoolName: profile?.schoolName || '',
     topics: '',
-    grade: '',
+    grade: profile?.grades || '',
     term: '',
-    subject: '',
+    subject: profile?.subjects || '',
     duration: '90',
     date: new Date().toISOString().split('T')[0],
     classes: '',
-    teacher: '',
+    teacher: profile?.teacherName || '',
     otherDetails: ''
   });
 
@@ -66,6 +69,27 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
       
       setGeneratedEval(initialData);
     }
+  }, [initialData]);
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      if (!initialData) {
+        const p = getProfile();
+        if (p) {
+          setFormData(prev => ({
+            ...prev,
+            schoolType: p.schoolType || prev.schoolType,
+            schoolName: p.schoolName || prev.schoolName,
+            subject: p.subjects || prev.subject,
+            grade: p.grades || prev.grade,
+            teacher: p.teacherName || prev.teacher
+          }));
+        }
+      }
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
   }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -467,16 +491,16 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
             <button
               type="submit"
               disabled={loading}
-              className="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-xl shadow-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:-translate-y-0 disabled:shadow-none"
+              className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-blue-900/10 hover:shadow-2xl hover:shadow-blue-900/20 hover:-translate-y-0.5 active:scale-95"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   <span>Gerando Avaliação...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-6 h-6" />
+                  <Sparkles className="w-5 h-5" />
                   <span>Gerar Avaliação</span>
                 </>
               )}

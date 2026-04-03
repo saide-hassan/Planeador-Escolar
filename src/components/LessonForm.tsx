@@ -5,6 +5,7 @@ import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { savePlan } from '../services/historyService';
+import { getProfile } from '../services/profileService';
 
 interface LessonFormProps {
   onBack?: () => void;
@@ -17,14 +18,15 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
   const [loading, setLoading] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState<LessonPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // Remove local darkMode state, use prop or default false if not provided (though App provides it)
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<ProcessedFile[]>([]);
   const [processingFile, setProcessingFile] = useState(false);
 
-  const [schoolType, setSchoolType] = useState('Escola');
-  const [schoolName, setSchoolName] = useState('');
+  const profile = getProfile();
+
+  const [schoolType, setSchoolType] = useState(profile?.schoolType || 'Escola');
+  const [schoolName, setSchoolName] = useState(profile?.schoolName || '');
   
   const [unitNumber, setUnitNumber] = useState('I');
   const [unitName, setUnitName] = useState('');
@@ -36,13 +38,13 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
 
   const [formData, setFormData] = useState<LessonPlanInput>({
     school: '',
-    subject: '',
+    subject: profile?.subjects || '',
     date: new Date().toISOString().split('T')[0],
     unit: '',
-    grade: '',
+    grade: profile?.grades || '',
     topic: '',
     duration: '45',
-    teacher: '',
+    teacher: profile?.teacherName || '',
     materials: '',
     includeExercises: false,
     includeHomework: false,
@@ -93,6 +95,27 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
         setAttachments(initialData.attachments);
       }
     }
+  }, [initialData]);
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      if (!initialData) {
+        const p = getProfile();
+        if (p) {
+          setSchoolType(p.schoolType);
+          setSchoolName(p.schoolName);
+          setFormData(prev => ({
+            ...prev,
+            subject: p.subjects || prev.subject,
+            grade: p.grades || prev.grade,
+            teacher: p.teacherName || prev.teacher
+          }));
+        }
+      }
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
   }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {

@@ -43,7 +43,14 @@ export const downloadEvaluationDocx = (evaluation: Evaluation) => {
               new TextRun({ text: `${evaluation.evaluationType} de ${evaluation.subject} - ${formattedGrade} - ${formattedTerm} - ${year}`, bold: true }),
             ],
             alignment: AlignmentType.CENTER,
-            spacing: { after: 400 },
+            spacing: { after: 200 },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({ text: `Data: ${format(new Date(evaluation.date), 'dd/MM/yyyy')}`, bold: true }),
+            ],
+            alignment: AlignmentType.RIGHT,
+            spacing: { after: 100 },
           }),
           new Paragraph({
             children: [
@@ -53,7 +60,7 @@ export const downloadEvaluationDocx = (evaluation: Evaluation) => {
             spacing: { after: 400 },
           }),
 
-          ...(evaluation.readingText ? [
+          ...(evaluation.readingText && (evaluation.readingText.title || (evaluation.readingText.paragraphs && evaluation.readingText.paragraphs.length > 0)) ? [
             new Paragraph({
               children: [
                 new TextRun({ text: "Texto", bold: true }),
@@ -78,7 +85,7 @@ export const downloadEvaluationDocx = (evaluation: Evaluation) => {
                 spacing: { after: 200 },
               })
             ] : []),
-            ...evaluation.readingText.paragraphs.map(p => new Paragraph({
+            ...(evaluation.readingText.paragraphs || []).map(p => new Paragraph({
               text: p,
               alignment: AlignmentType.JUSTIFIED,
               spacing: { after: 200 },

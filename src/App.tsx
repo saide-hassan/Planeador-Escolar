@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import GeneratorTabs from './components/GeneratorTabs';
 import WelcomeScreen from './components/WelcomeScreen';
 import HistoryScreen from './components/HistoryScreen';
+import ProfileModal from './components/ProfileModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { HistoryItem } from './types';
 
@@ -19,6 +20,7 @@ export default function App() {
     return 'welcome';
   });
   const [editingItem, setEditingItem] = useState<HistoryItem | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     // Check local storage or system preference
     if (typeof window !== 'undefined') {
@@ -45,6 +47,18 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  const handleBack = () => {
+    if (view === 'form') {
+      if (editingItem) {
+        navigateTo('history', true);
+      } else {
+        navigateTo('welcome', true);
+      }
+    } else if (view === 'history') {
+      navigateTo('welcome', true);
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Backspace') {
@@ -57,18 +71,14 @@ export default function App() {
           
         if (!isInput) {
           e.preventDefault();
-          if (window.history.length > 1) {
-            window.history.back();
-          } else {
-            navigateTo('welcome');
-          }
+          handleBack();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [view, editingItem]);
 
   useEffect(() => {
     if (darkMode) {
@@ -88,8 +98,13 @@ export default function App() {
     updateThemeColor();
   }, [darkMode]);
 
-  const navigateTo = (newView: 'welcome' | 'form' | 'history') => {
-    window.location.hash = newView === 'welcome' ? '' : newView;
+  const navigateTo = (newView: 'welcome' | 'form' | 'history', replace = false) => {
+    const newHash = newView === 'welcome' ? '' : newView;
+    if (replace) {
+      window.location.replace(`#${newHash}`);
+    } else {
+      window.location.hash = newHash;
+    }
   };
 
   const handleEdit = (item: HistoryItem) => {
@@ -109,6 +124,7 @@ export default function App() {
               navigateTo('form');
             }} 
             onHistory={() => navigateTo('history')}
+            onProfile={() => setIsProfileOpen(true)}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
@@ -116,13 +132,8 @@ export default function App() {
         {view === 'form' && (
           <div key="main-content">
             <GeneratorTabs 
-              onBack={() => {
-                if (window.history.length > 1) {
-                  window.history.back();
-                } else {
-                  navigateTo('welcome');
-                }
-              }} 
+              onBack={handleBack} 
+              onProfile={() => setIsProfileOpen(true)}
               initialData={editingItem}
               darkMode={darkMode}
               toggleTheme={toggleTheme}
@@ -131,19 +142,14 @@ export default function App() {
         )}
         {view === 'history' && (
           <HistoryScreen 
-            onBack={() => {
-              if (window.history.length > 1) {
-                window.history.back();
-              } else {
-                navigateTo('welcome');
-              }
-            }} 
+            onBack={handleBack} 
             onEdit={handleEdit}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
         )}
       </div>
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </ErrorBoundary>
   );
 }

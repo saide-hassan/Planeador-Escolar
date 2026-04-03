@@ -1,14 +1,15 @@
 import React from 'react';
-import { ArrowRight, Sparkles, History, Sun, Moon } from 'lucide-react';
+import { ArrowRight, Sparkles, History, Sun, Moon, User } from 'lucide-react';
 
 interface WelcomeScreenProps {
   onStart: () => void;
   onHistory: () => void;
+  onProfile: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleTheme }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onStart, onHistory, onProfile, darkMode, toggleTheme }: WelcomeScreenProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 dark:from-slate-950 dark:to-blue-950 p-4 transition-colors duration-500 overflow-hidden">
       {/* Header */}
@@ -18,14 +19,23 @@ export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleThem
           <img src="/logo.svg" alt="Logo" className="w-6 h-6" />
         </div>
 
-        {/* Theme Toggle Right */}
-        <button
-          onClick={toggleTheme}
-          className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
-          aria-label="Alternar tema"
-        >
-          {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-        </button>
+        {/* Right Actions */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onProfile}
+            className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
+            aria-label="Perfil do Professor"
+          >
+            <User className="w-6 h-6" />
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
+            aria-label="Alternar tema"
+          >
+            {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Background Elements */}
@@ -79,7 +89,7 @@ export default function WelcomeScreen({ onStart, onHistory, darkMode, toggleThem
       <div 
         className="absolute bottom-2 left-0 w-full flex flex-col items-center gap-4 animate-in fade-in duration-1000 delay-1000 fill-mode-backwards opacity-70 hover:opacity-100 transition-opacity z-50"
       >
-        <div className="flex items-center gap-3 text-lg md:text-xl text-slate-500 dark:text-slate-400 px-4 py-2 rounded-full border border-transparent hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center">
+        <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 px-4 py-2 rounded-full border border-transparent hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center">
           <span className="font-medium">
             © <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Saide Hassan</a> - Todos os direitos reservados - {new Date().getFullYear()}
           </span>
