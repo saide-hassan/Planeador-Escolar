@@ -12,6 +12,12 @@ import AuthModal from './components/AuthModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { HistoryItem } from './types';
 
+declare global {
+  interface Window {
+    applyTheme: (mode: 'light' | 'dark', isManual?: boolean) => void;
+  }
+}
+
 export default function App() {
   const [view, setView] = useState<'welcome' | 'form' | 'history'>(() => {
     if (typeof window !== 'undefined') {
@@ -83,22 +89,29 @@ export default function App() {
   }, [view, editingItem]);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+    if (typeof window !== 'undefined' && window.applyTheme) {
+      // Check se é manual via estado local que foi alterado
+      const isManual = localStorage.getItem('theme-manual') === 'true';
+      window.applyTheme(darkMode ? 'dark' : 'light', isManual);
     }
-
-    const updateThemeColor = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      const themeColor = isDark ? '#020617' : '#f8fafc';
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
-    };
-
-    updateThemeColor();
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      const isManual = localStorage.getItem('theme-manual') === 'true';
+      if (!isManual) {
+        setDarkMode(e.matches);
+      }
+    };
+    
+    // Para atualizar o react state a partir de eventos, ex: entre janelas ou da media query
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
+  }, []);
 
   const navigateTo = (newView: 'welcome' | 'form' | 'history', replace = false) => {
     const newHash = newView === 'welcome' ? '' : newView;
@@ -114,7 +127,13 @@ export default function App() {
     navigateTo('form');
   };
 
-  const toggleTheme = () => setDarkMode(!darkMode);
+  const toggleTheme = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    if (typeof window !== 'undefined' && window.applyTheme) {
+      window.applyTheme(newDarkMode ? 'dark' : 'light', true);
+    }
+  };
 
   return (
     <ErrorBoundary>

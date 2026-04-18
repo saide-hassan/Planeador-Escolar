@@ -3,9 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f8fafc" />
+    <!-- 1. Meta tag no <head> com id theme-meta -->
+    <meta name="theme-color" content="#020617" id="theme-meta" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <title>Planeador Escolar</title>
+
+    <script>
+      // 2. Constantes de cor
+      const THEME_COLORS = {
+        light: '#f8fafc',
+        dark: '#020617'
+      };
+
+      // 3. Função applyTheme(mode)
+      window.applyTheme = function(mode, isManual = false) {
+        const trueMode = mode === 'dark' ? 'dark' : 'light';
+        // (a) Aplique o tema no <html> via classe
+        if (trueMode === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+
+        // (b) Atualize a meta tag
+        const metaTag = document.getElementById('theme-meta');
+        if (metaTag) {
+          metaTag.setAttribute('content', THEME_COLORS[trueMode]);
+        }
+
+        // (c) Persista a escolha com localStorage
+        localStorage.setItem('theme', trueMode);
+        
+        if (isManual) {
+          localStorage.setItem('theme-manual', 'true');
+        }
+      };
+
+      // 4. Inicialização sem flash
+      (function() {
+        // Leia a preferência guardada ou detecte o sistema
+        const savedTheme = localStorage.getItem('theme');
+        const isManual = localStorage.getItem('theme-manual') === 'true';
+        let initialTheme = 'light'; // O tema padrão deve ser light
+        
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          initialTheme = savedTheme;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          initialTheme = 'dark';
+        }
+        
+        window.applyTheme(initialTheme, isManual);
+      })();
+
+      // 5. Sincronização com o sistema
+      if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+          const isManual = localStorage.getItem('theme-manual') === 'true';
+          // atualize caso não haja preferência manual
+          if (!isManual) {
+            window.applyTheme(e.matches ? 'dark' : 'light', false);
+          }
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
