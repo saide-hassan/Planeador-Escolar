@@ -5,7 +5,7 @@ import { generateLessonPlan } from '../services/ai';
 import { downloadDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { savePlan } from '../services/historyService';
-import { getProfile } from '../services/profileService';
+import { getProfile, getProfileSync } from '../services/profileService';
 
 interface LessonFormProps {
   onBack?: () => void;
@@ -23,7 +23,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
   const [attachments, setAttachments] = useState<ProcessedFile[]>([]);
   const [processingFile, setProcessingFile] = useState(false);
 
-  const profile = getProfile();
+  const profile = getProfileSync();
 
   const [schoolType, setSchoolType] = useState(profile?.schoolType || 'Escola');
   const [schoolName, setSchoolName] = useState(profile?.schoolName || '');
@@ -94,13 +94,27 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
       if (initialData.attachments) {
         setAttachments(initialData.attachments);
       }
+    } else {
+      // Load async profile if not editing
+      getProfile().then(p => {
+        if (p) {
+          setSchoolType(p.schoolType);
+          setSchoolName(p.schoolName);
+          setFormData(prev => ({
+            ...prev,
+            subject: p.subjects || prev.subject,
+            grade: p.grades || prev.grade,
+            teacher: p.teacherName || prev.teacher
+          }));
+        }
+      });
     }
   }, [initialData]);
 
   useEffect(() => {
-    const handleProfileUpdate = () => {
+    const handleProfileUpdate = async () => {
       if (!initialData) {
-        const p = getProfile();
+        const p = await getProfile();
         if (p) {
           setSchoolType(p.schoolType);
           setSchoolName(p.schoolName);
@@ -170,7 +184,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
       }
 
       setGeneratedPlan(plan);
-      savePlan(plan);
+      await savePlan(plan);
     } catch (err: any) {
       let errorMessage = err?.message || 'Ocorreu um erro desconhecido.';
       
@@ -227,7 +241,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
                     <div className="relative w-1/3">
                       <select
                         value={schoolType}
-                        onChange={(e) => setSchoolType(e.target.value)}
+                        onChange={(e) => setSchoolType(e.target.value as 'Escola' | 'Colégio')}
                         className="w-full appearance-none px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                       >
                         <option value="Escola">Escola</option>

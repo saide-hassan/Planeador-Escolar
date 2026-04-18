@@ -3,23 +3,33 @@ import { HistoryItem, LessonPlan, Evaluation } from '../types';
 import { getHistory, deleteItem, clearHistory } from '../services/historyService';
 import { downloadDocx } from '../services/docxGenerator';
 import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/evaluationDocxGenerator';
-import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, Sun, Moon, FileCheck } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, FileCheck } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import SettingsMenu from './SettingsMenu';
 
 interface HistoryScreenProps {
   onBack: () => void;
   onEdit: (item: HistoryItem) => void;
+  onProfile: () => void;
+  onLogin: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }: HistoryScreenProps) {
+export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, darkMode, toggleTheme }: HistoryScreenProps) {
   const [items, setItems] = useState<HistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [confirmAction, setConfirmAction] = useState<{ type: 'delete' | 'clear', id?: string } | null>(null);
 
   useEffect(() => {
-    setItems(getHistory());
+    const fetchHistory = async () => {
+      setLoading(true);
+      const data = await getHistory();
+      setItems(data);
+      setLoading(false);
+    };
+    fetchHistory();
   }, []);
 
   const handleDeleteClick = (id: string) => {
@@ -30,12 +40,13 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
     setConfirmAction({ type: 'clear' });
   };
 
-  const confirmActionHandler = () => {
+  const confirmActionHandler = async () => {
     if (confirmAction?.type === 'delete' && confirmAction.id) {
-      deleteItem(confirmAction.id);
-      setItems(getHistory());
+      await deleteItem(confirmAction.id);
+      const data = await getHistory();
+      setItems(data);
     } else if (confirmAction?.type === 'clear') {
-      clearHistory();
+      await clearHistory();
       setItems([]);
     }
     setConfirmAction(null);
@@ -57,12 +68,12 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
             
             {/* Mobile Actions */}
             <div className="flex items-center gap-2 sm:hidden">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
-              >
-                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
+              <SettingsMenu 
+                onProfile={onProfile} 
+                onLogin={onLogin}
+                darkMode={darkMode} 
+                toggleTheme={toggleTheme} 
+              />
               {items.length > 0 && (
                 <button
                   onClick={handleClearClick}
@@ -80,12 +91,12 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
 
           {/* Desktop Actions */}
           <div className="hidden sm:flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            <SettingsMenu 
+              onProfile={onProfile} 
+              onLogin={onLogin}
+              darkMode={darkMode} 
+              toggleTheme={toggleTheme} 
+            />
             {items.length > 0 && (
               <button
                 onClick={handleClearClick}
@@ -100,7 +111,12 @@ export default function HistoryScreen({ onBack, onEdit, darkMode, toggleTheme }:
       </div>
 
       <div className="min-h-screen p-4 sm:p-6 md:p-8 pt-36 sm:pt-28 max-w-7xl mx-auto relative">
-        {items.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-500">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">A carregar histórico...</h3>
+          </div>
+        ) : items.length === 0 ? (
         <div className="text-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-500">
           <div className="bg-slate-100 dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-slate-400" />

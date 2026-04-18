@@ -8,6 +8,7 @@ import GeneratorTabs from './components/GeneratorTabs';
 import WelcomeScreen from './components/WelcomeScreen';
 import HistoryScreen from './components/HistoryScreen';
 import ProfileModal from './components/ProfileModal';
+import AuthModal from './components/AuthModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { HistoryItem } from './types';
 
@@ -21,6 +22,7 @@ export default function App() {
   });
   const [editingItem, setEditingItem] = useState<HistoryItem | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     // Check local storage or system preference
     if (typeof window !== 'undefined') {
@@ -125,6 +127,7 @@ export default function App() {
             }} 
             onHistory={() => navigateTo('history')}
             onProfile={() => setIsProfileOpen(true)}
+            onLogin={() => setIsAuthOpen(true)}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
@@ -134,6 +137,7 @@ export default function App() {
             <GeneratorTabs 
               onBack={handleBack} 
               onProfile={() => setIsProfileOpen(true)}
+              onLogin={() => setIsAuthOpen(true)}
               initialData={editingItem}
               darkMode={darkMode}
               toggleTheme={toggleTheme}
@@ -144,12 +148,15 @@ export default function App() {
           <HistoryScreen 
             onBack={handleBack} 
             onEdit={handleEdit}
+            onProfile={() => setIsProfileOpen(true)}
+            onLogin={() => setIsAuthOpen(true)}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
         )}
       </div>
       <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={() => setIsAuthOpen(false)} />
     </ErrorBoundary>
   );
 }

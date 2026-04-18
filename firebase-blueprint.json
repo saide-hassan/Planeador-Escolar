@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "Teacher profile settings",
+      "type": "object",
+      "properties": {
+        "schoolName": { "type": "string" },
+        "schoolType": { "type": "string" },
+        "teacherName": { "type": "string" },
+        "subjects": { "type": "string" },
+        "grades": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "HistoryItem": {
+      "title": "HistoryItem",
+      "description": "A saved lesson plan or evaluation",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string" },
+        "data": { "type": "object", "description": "The serialized JSON data of the item" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "type", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/Profile" },
+      "description": "Stores user profiles."
+    },
+    "/history/{historyId}": {
+      "schema": { "$ref": "#/entities/HistoryItem" },
+      "description": "Stores saved history items."
+    }
+  }
+}

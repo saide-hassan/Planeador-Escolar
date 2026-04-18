@@ -8,7 +8,7 @@ import { generateEvaluation } from '../services/ai';
 import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/evaluationDocxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { saveItem } from '../services/historyService';
-import { getProfile } from '../services/profileService';
+import { getProfile, getProfileSync } from '../services/profileService';
 
 interface EvaluationFormProps {
   onBack?: () => void;
@@ -25,7 +25,7 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
   const [attachments, setAttachments] = useState<ProcessedFile[]>([]);
   const [processingFile, setProcessingFile] = useState(false);
 
-  const profile = getProfile();
+  const profile = getProfileSync();
 
   const [formData, setFormData] = useState<EvaluationInput>({
     evaluationType: 'ACS 1',
@@ -68,13 +68,26 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
       }
       
       setGeneratedEval(initialData);
+    } else {
+      getProfile().then(p => {
+        if (p) {
+          setFormData(prev => ({
+            ...prev,
+            schoolType: p.schoolType || prev.schoolType,
+            schoolName: p.schoolName || prev.schoolName,
+            subject: p.subjects || prev.subject,
+            grade: p.grades || prev.grade,
+            teacher: p.teacherName || prev.teacher
+          }));
+        }
+      });
     }
   }, [initialData]);
 
   useEffect(() => {
-    const handleProfileUpdate = () => {
+    const handleProfileUpdate = async () => {
       if (!initialData) {
-        const p = getProfile();
+        const p = await getProfile();
         if (p) {
           setFormData(prev => ({
             ...prev,
@@ -151,7 +164,7 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
       }
 
       setGeneratedEval(result);
-      saveItem(result);
+      await saveItem(result);
     } catch (err: any) {
       setError(err.message || "Ocorreu um erro ao gerar a avaliação. Por favor, tente novamente.");
     } finally {

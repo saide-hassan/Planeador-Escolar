@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import LessonForm from './LessonForm';
 import EvaluationForm from './EvaluationForm';
 import { HistoryItem, LessonPlan, Evaluation } from '../types';
-import { BookOpen, FileCheck, ChevronDown, Sun, Moon, User } from 'lucide-react';
+import { BookOpen, FileCheck, ChevronDown } from 'lucide-react';
+import SettingsMenu from './SettingsMenu';
 
 interface GeneratorTabsProps {
   onBack: () => void;
   onProfile: () => void;
+  onLogin: () => void;
   initialData?: HistoryItem | null;
-  darkMode?: boolean;
-  toggleTheme?: () => void;
+  darkMode: boolean;
+  toggleTheme: () => void;
 }
 
-export default function GeneratorTabs({ onBack, onProfile, initialData, darkMode, toggleTheme }: GeneratorTabsProps) {
+export default function GeneratorTabs({ onBack, onProfile, onLogin, initialData, darkMode, toggleTheme }: GeneratorTabsProps) {
   const [activeTab, setActiveTab] = useState<'lesson' | 'evaluation'>('lesson');
 
   useEffect(() => {
@@ -44,24 +46,12 @@ export default function GeneratorTabs({ onBack, onProfile, initialData, darkMode
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onProfile}
-                className="p-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
-                aria-label="Perfil do Professor"
-              >
-                <User className="w-5 h-5" />
-              </button>
-              {toggleTheme && (
-                <button
-                  onClick={toggleTheme}
-                  className="p-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
-                  aria-label="Alternar tema"
-                >
-                  {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-              )}
-            </div>
+            <SettingsMenu 
+              onProfile={onProfile} 
+              onLogin={onLogin}
+              darkMode={darkMode} 
+              toggleTheme={toggleTheme} 
+            />
           </div>
 
           <div className="flex justify-center w-full">

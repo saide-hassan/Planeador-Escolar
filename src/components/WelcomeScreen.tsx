@@ -1,15 +1,17 @@
 import React from 'react';
-import { ArrowRight, Sparkles, History, Sun, Moon, User } from 'lucide-react';
+import { ArrowRight, Sparkles, History } from 'lucide-react';
+import SettingsMenu from './SettingsMenu';
 
 interface WelcomeScreenProps {
   onStart: () => void;
   onHistory: () => void;
   onProfile: () => void;
+  onLogin: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function WelcomeScreen({ onStart, onHistory, onProfile, darkMode, toggleTheme }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, darkMode, toggleTheme }: WelcomeScreenProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 dark:from-slate-950 dark:to-blue-950 p-4 transition-colors duration-500 overflow-hidden">
       {/* Header */}
@@ -20,22 +22,12 @@ export default function WelcomeScreen({ onStart, onHistory, onProfile, darkMode,
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onProfile}
-            className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
-            aria-label="Perfil do Professor"
-          >
-            <User className="w-6 h-6" />
-          </button>
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700 shadow-lg text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-all"
-            aria-label="Alternar tema"
-          >
-            {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-          </button>
-        </div>
+        <SettingsMenu 
+          onProfile={onProfile} 
+          onLogin={onLogin}
+          darkMode={darkMode} 
+          toggleTheme={toggleTheme} 
+        />
       </div>
 
       {/* Background Elements */}
