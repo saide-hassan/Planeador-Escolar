@@ -5,11 +5,48 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
+  /* Set base white and black strictly to the palette bounds */
+  --color-white: #F1F7F6;
+  --color-black: #011413;
+  
+  /* Neutral scale mapped to custom greens/blacks */
+  --color-slate-50: #F1F7F6; /* Anti-flash white */
+  --color-slate-100: #E4EFEB;
+  --color-slate-200: #C1DCD7;
+  --color-slate-300: #98C5BE;
+  --color-slate-400: #6BA89F;
+  --color-slate-500: #46887E;
+  --color-slate-600: #316C63;
+  --color-slate-700: #03624C; /* Bangladesh Green */
+  --color-slate-800: #03423A;
+  --color-slate-900: #032221; /* Dark Green */
+  --color-slate-950: #011413; /* Rich Black */
+
+  /* Primary scale mapped to Mountain Meadow / Caribbean Green */
+  --color-blue-50: #E6FCF2;
+  --color-blue-100: #C5F8E0;
+  --color-blue-200: #9DEECC;
+  --color-blue-300: #69DFB3;
+  --color-blue-400: #2CC295; /* Mountain Meadow */
+  --color-blue-500: #00DF81; /* Caribbean Green */
+  --color-blue-600: #00B86B; 
+  --color-blue-700: #008C51;
+  --color-blue-800: #006F41;
+  --color-blue-900: #005934;
+  --color-blue-950: #00311D;
+
+  /* Re-map indigo to the primary scale to avoid generic colors in Welcome screen */
+  --color-indigo-50: var(--color-blue-50);
+  --color-indigo-100: var(--color-blue-100);
+  --color-indigo-200: var(--color-blue-200);
+  --color-indigo-300: var(--color-blue-300);
+  --color-indigo-400: var(--color-blue-400);
+  --color-indigo-500: var(--color-blue-500);
+  --color-indigo-600: var(--color-blue-600);
+  --color-indigo-700: var(--color-blue-700);
+  --color-indigo-800: var(--color-blue-800);
+  --color-indigo-900: var(--color-blue-900);
+  --color-indigo-950: var(--color-blue-950);
 }
 
 @variant dark (&:where(.dark, .dark *));
