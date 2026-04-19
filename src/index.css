@@ -6,11 +6,11 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
   /* Set base white and black strictly to the palette bounds */
-  --color-white: #F1F7F6;
-  --color-black: #011413;
+  --color-white: #D8F0F0;
+  --color-black: #385050;
   
   /* Neutral scale mapped to custom greens/blacks */
-  --color-slate-50: #F1F7F6; /* Anti-flash white */
+  --color-slate-50: #D8F0F0; /* Requested Light Background */
   --color-slate-100: #E4EFEB;
   --color-slate-200: #C1DCD7;
   --color-slate-300: #98C5BE;
@@ -20,7 +20,7 @@
   --color-slate-700: #03624C; /* Bangladesh Green */
   --color-slate-800: #03423A;
   --color-slate-900: #032221; /* Dark Green */
-  --color-slate-950: #011413; /* Rich Black */
+  --color-slate-950: #385050; /* Requested Dark Background */
 
   /* Primary scale mapped to Mountain Meadow / Caribbean Green */
   --color-blue-50: #E6FCF2;
