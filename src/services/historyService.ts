@@ -86,11 +86,16 @@ export const saveItem = async (item: HistoryItem) => {
   if (isFirebaseConfigured() && auth.currentUser) {
     try {
       const docRef = doc(db, 'history', newItem.id);
+      
+      // Firebase throws an error if the object contains undefined values. 
+      // We stringify and parse to seamlessly drop all undefined properties.
+      const cleanedItem = JSON.parse(JSON.stringify(newItem));
+      
       await setDoc(docRef, {
         userId: auth.currentUser.uid,
-        type: newItem.type || 'lesson',
-        data: newItem,
-        createdAt: newItem.createdAt
+        type: cleanedItem.type || 'lesson',
+        data: cleanedItem,
+        createdAt: cleanedItem.createdAt
       });
     } catch (e) {
       console.error('Error saving item to Firebase', e);
