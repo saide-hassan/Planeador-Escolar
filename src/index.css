@@ -7,7 +7,7 @@
   
   /* Set base white and black strictly to the palette bounds */
   --color-white: #D8F0F0;
-  --color-black: #385050;
+  --color-black: #002018;
   
   /* Neutral scale mapped to custom greens/blacks */
   --color-slate-50: #D8F0F0; /* Requested Light Background */
@@ -20,7 +20,7 @@
   --color-slate-700: #03624C; /* Bangladesh Green */
   --color-slate-800: #03423A;
   --color-slate-900: #032221; /* Dark Green */
-  --color-slate-950: #385050; /* Requested Dark Background */
+  --color-slate-950: #002018; /* Requested Dark Background */
 
   /* Primary scale mapped to Mountain Meadow / Caribbean Green */
   --color-blue-50: #E6FCF2;
