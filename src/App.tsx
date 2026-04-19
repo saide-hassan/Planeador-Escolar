@@ -11,6 +11,8 @@ import ProfileModal from './components/ProfileModal';
 import AuthModal from './components/AuthModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { HistoryItem } from './types';
+import { LogOut } from 'lucide-react';
+import { auth } from './lib/firebase';
 
 declare global {
   interface Window {
@@ -29,6 +31,7 @@ export default function App() {
   const [editingItem, setEditingItem] = useState<HistoryItem | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     // Check local storage or system preference
     if (typeof window !== 'undefined') {
@@ -135,6 +138,11 @@ export default function App() {
     }
   };
 
+  const executeLogout = async () => {
+    await auth.signOut();
+    setIsLogoutConfirmOpen(false);
+  };
+
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-slate-50 dark:bg-black py-8 transition-colors duration-500">
@@ -147,6 +155,7 @@ export default function App() {
             onHistory={() => navigateTo('history')}
             onProfile={() => setIsProfileOpen(true)}
             onLogin={() => setIsAuthOpen(true)}
+            onLogout={() => setIsLogoutConfirmOpen(true)}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
@@ -157,6 +166,7 @@ export default function App() {
               onBack={handleBack} 
               onProfile={() => setIsProfileOpen(true)}
               onLogin={() => setIsAuthOpen(true)}
+              onLogout={() => setIsLogoutConfirmOpen(true)}
               initialData={editingItem}
               darkMode={darkMode}
               toggleTheme={toggleTheme}
@@ -169,6 +179,7 @@ export default function App() {
             onEdit={handleEdit}
             onProfile={() => setIsProfileOpen(true)}
             onLogin={() => setIsAuthOpen(true)}
+            onLogout={() => setIsLogoutConfirmOpen(true)}
             darkMode={darkMode}
             toggleTheme={toggleTheme}
           />
@@ -176,6 +187,37 @@ export default function App() {
       </div>
       <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={() => setIsAuthOpen(false)} />
+
+      {/* Global Logout Confirmation Modal */}
+      {isLogoutConfirmOpen && (
+        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-50 dark:border-red-800/50">
+              <LogOut className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Terminar Sessão</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-8 text-sm">
+              Tem a certeza de que deseja sair? Terá de iniciar sessão novamente para sincronizar os seus dados.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                type="button"
+                onClick={() => setIsLogoutConfirmOpen(false)}
+                className="flex-1 px-4 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors text-sm"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                onClick={executeLogout}
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors shadow-sm text-sm"
+              >
+                Sim, Sair
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ErrorBoundary>
   );
 }

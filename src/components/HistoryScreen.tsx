@@ -13,11 +13,12 @@ interface HistoryScreenProps {
   onEdit: (item: HistoryItem) => void;
   onProfile: () => void;
   onLogin: () => void;
+  onLogout?: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, darkMode, toggleTheme }: HistoryScreenProps) {
+export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLogout, darkMode, toggleTheme }: HistoryScreenProps) {
   const [items, setItems] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirmAction, setConfirmAction] = useState<{ type: 'delete' | 'clear', id?: string } | null>(null);
@@ -71,6 +72,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, dark
               <SettingsMenu 
                 onProfile={onProfile} 
                 onLogin={onLogin}
+                onLogout={onLogout}
                 darkMode={darkMode} 
                 toggleTheme={toggleTheme} 
               />
@@ -94,6 +96,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, dark
             <SettingsMenu 
               onProfile={onProfile} 
               onLogin={onLogin}
+              onLogout={onLogout}
               darkMode={darkMode} 
               toggleTheme={toggleTheme} 
             />

@@ -66,11 +66,6 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     }
   };
 
-  const handleLogout = async () => {
-    await auth.signOut();
-    onClose();
-  };
-
   const inputClassName = "w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-900 dark:text-white";
   const labelClassName = "block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2";
 
@@ -84,12 +79,6 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">Perfil do Professor</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {loadingSession ? (
@@ -169,47 +158,37 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               </form>
             </div>
 
-            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
-              {user ? (
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors text-sm font-medium border border-transparent hover:border-red-100 dark:hover:border-red-800/50"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sair
-                </button>
-              ) : (
-                <div className="hidden sm:block"></div>
-              )}
-              <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  disabled={isSaving}
-                  className="w-full sm:w-auto px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors disabled:opacity-50 text-center"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSubmit()}
-                  disabled={isSaving}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:pointer-events-none"
-                >
-                  {isSaving ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      A Gravar...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      Guardar Perfil
-                    </>
-                  )}
-                </button>
-              </div>
+            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-row items-center justify-between gap-3">
+              {/* Left: Cancelar */}
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isSaving}
+                className="flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 text-slate-600 dark:text-slate-300 text-xs sm:text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+
+              {/* Right: Guardar */}
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={isSaving}
+                className="flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-xl transition-colors shadow-sm disabled:opacity-70 disabled:pointer-events-none"
+              >
+                {isSaving ? (
+                  <>
+                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span className="hidden sm:inline">Gravando</span>
+                    <span className="sm:hidden">Gravar</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    Guardar
+                  </>
+                )}
+              </button>
             </div>
           </>
         )}

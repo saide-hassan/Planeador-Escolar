@@ -6,11 +6,12 @@ import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 interface SettingsMenuProps {
   onProfile: () => void;
   onLogin: () => void;
+  onLogout?: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function SettingsMenu({ onProfile, onLogin, darkMode, toggleTheme }: SettingsMenuProps) {
+export default function SettingsMenu({ onProfile, onLogin, onLogout, darkMode, toggleTheme }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -34,9 +35,14 @@ export default function SettingsMenu({ onProfile, onLogin, darkMode, toggleTheme
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = async () => {
-    await auth.signOut();
+  const handleLogoutClick = () => {
     setIsOpen(false);
+    if (onLogout) {
+      onLogout();
+    } else {
+      // Fallback
+      auth.signOut();
+    }
   };
 
   return (
@@ -82,7 +88,7 @@ export default function SettingsMenu({ onProfile, onLogin, darkMode, toggleTheme
 
             {user ? (
               <button
-                onClick={handleLogout}
+                onClick={handleLogoutClick}
                 className="w-full px-4 py-3 flex items-center gap-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
               >
                 <LogOut className="w-4 h-4" />

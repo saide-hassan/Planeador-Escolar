@@ -7,11 +7,12 @@ interface WelcomeScreenProps {
   onHistory: () => void;
   onProfile: () => void;
   onLogin: () => void;
+  onLogout?: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, darkMode, toggleTheme }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, onLogout, darkMode, toggleTheme }: WelcomeScreenProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-black p-4 transition-colors duration-500 overflow-hidden">
       {/* Header */}
@@ -25,6 +26,7 @@ export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, 
         <SettingsMenu 
           onProfile={onProfile} 
           onLogin={onLogin}
+          onLogout={onLogout}
           darkMode={darkMode} 
           toggleTheme={toggleTheme} 
         />

@@ -9,12 +9,13 @@ interface GeneratorTabsProps {
   onBack: () => void;
   onProfile: () => void;
   onLogin: () => void;
+  onLogout?: () => void;
   initialData?: HistoryItem | null;
   darkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function GeneratorTabs({ onBack, onProfile, onLogin, initialData, darkMode, toggleTheme }: GeneratorTabsProps) {
+export default function GeneratorTabs({ onBack, onProfile, onLogin, onLogout, initialData, darkMode, toggleTheme }: GeneratorTabsProps) {
   const [activeTab, setActiveTab] = useState<'lesson' | 'evaluation'>('lesson');
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export default function GeneratorTabs({ onBack, onProfile, onLogin, initialData,
             <SettingsMenu 
               onProfile={onProfile} 
               onLogin={onLogin}
+              onLogout={onLogout}
               darkMode={darkMode} 
               toggleTheme={toggleTheme} 
             />
