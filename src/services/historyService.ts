@@ -76,23 +76,9 @@ export const saveItem = async (item: HistoryItem) => {
     // Update existing item
     updatedHistory[existingIndex] = newItem;
   } else {
-    // Check for duplicates
-    const isDuplicate = history.some(p => {
-      if (p.type === 'evaluation' && newItem.type === 'evaluation') {
-        const pEval = p as Evaluation;
-        const nEval = newItem as Evaluation;
-        return pEval.topics === nEval.topics && pEval.subject === nEval.subject && pEval.date === nEval.date;
-      } else if (p.type !== 'evaluation' && newItem.type !== 'evaluation') {
-        const pLesson = p as LessonPlan;
-        const nLesson = newItem as LessonPlan;
-        return pLesson.topic === nLesson.topic && pLesson.subject === nLesson.subject && pLesson.date === nLesson.date && pLesson.contentSummary === nLesson.contentSummary;
-      }
-      return false;
-    });
-
-    if (!isDuplicate) {
-      updatedHistory = [newItem, ...history];
-    }
+    // For new items, we no longer do aggressive deduplication 
+    // because each generation is unique and should be saved if the user generated it.
+    updatedHistory = [newItem, ...history];
   }
   
   localStorage.setItem(HISTORY_KEY, JSON.stringify(updatedHistory));
