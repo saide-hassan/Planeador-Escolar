@@ -113,7 +113,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
         </div>
       </div>
 
-      <div className="min-h-screen p-4 sm:p-6 md:p-8 pt-36 sm:pt-28 max-w-7xl mx-auto relative">
+      <div className="min-h-screen p-4 sm:p-6 md:p-8 pt-36 sm:pt-36 lg:pt-32 max-w-7xl mx-auto relative">
         {loading ? (
           <div className="text-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-500">
             <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
