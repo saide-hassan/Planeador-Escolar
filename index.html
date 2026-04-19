@@ -4,21 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- 1. Meta tag no <head> com id theme-meta -->
-    <meta name="theme-color" content="#f8fafc" id="theme-meta" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1F7F6" id="theme-meta-light" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#011413" id="theme-meta-dark" />
+    <meta name="theme-color" content="#F1F7F6" id="theme-meta-default" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <title>Planeador Escolar</title>
 
     <script>
       // 2. Constantes de cor mapeadas da nova paleta
       const THEME_COLORS = {
-        light: '#f8fafc', // slate-50
-        dark: '#000000'   // black
+        light: '#F1F7F6', // Anti-Flash White
+        dark: '#011413'   // Rich Black / slate-950
       };
 
       // 3. Função applyTheme(mode)
       window.applyTheme = function(mode, isManual = false) {
         const trueMode = mode === 'dark' ? 'dark' : 'light';
         // (a) Aplique o tema no <html> via classe
+        document.documentElement.style.backgroundColor = THEME_COLORS[trueMode];
+        
         if (trueMode === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
@@ -26,9 +30,15 @@
         }
 
         // (b) Atualize a meta tag
-        const metaTag = document.getElementById('theme-meta');
-        if (metaTag) {
-          metaTag.setAttribute('content', THEME_COLORS[trueMode]);
+        const metaLight = document.getElementById('theme-meta-light');
+        const metaDark = document.getElementById('theme-meta-dark');
+        const metaDefault = document.getElementById('theme-meta-default');
+        
+        if (metaLight && metaDark && metaDefault) {
+          // Quando forçado manualmente, igualamos ambas as media tags para forçar o browser
+          metaLight.setAttribute('content', THEME_COLORS[trueMode]);
+          metaDark.setAttribute('content', THEME_COLORS[trueMode]);
+          metaDefault.setAttribute('content', THEME_COLORS[trueMode]);
         }
 
         // (c) Persista a escolha com localStorage

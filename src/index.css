@@ -51,9 +51,15 @@
 
 @variant dark (&:where(.dark, .dark *));
 
-body {
+body, html {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-slate-50 dark:bg-black text-slate-800 dark:text-slate-100 transition-colors duration-500;
+  background-color: var(--color-slate-50);
+  @apply text-slate-800 transition-colors duration-500;
+}
+
+.dark body, .dark html {
+  background-color: var(--color-black);
+  @apply text-slate-100;
 }
