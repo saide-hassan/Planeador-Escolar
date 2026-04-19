@@ -538,7 +538,7 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
                 Avaliação Gerada com Sucesso!
               </h3>
               <p className="text-slate-500 dark:text-slate-400 max-w-md">
-                Sua avaliação e a grelha de correcção estão prontas para download.
+                A avaliação e respectiva grelha de correcção foram guardadas no histórico e estão prontas para download.
               </p>
             </div>
 

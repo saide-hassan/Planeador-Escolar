@@ -13,7 +13,7 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, darkMode, toggleTheme }: WelcomeScreenProps) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 dark:from-slate-950 dark:to-blue-950 p-4 transition-colors duration-500 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-black p-4 transition-colors duration-500 overflow-hidden">
       {/* Header */}
       <div className="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-700">
         {/* Logo Left */}

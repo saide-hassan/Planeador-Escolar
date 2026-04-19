@@ -575,7 +575,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
                   Plano Gerado com Sucesso!
                 </h3>
                 <p className="text-slate-500 dark:text-slate-400 max-w-md">
-                  Seu plano de aula está pronto para download.
+                  Seu plano de aula foi guardado automaticamente no histórico e está pronto para download.
                 </p>
               </div>
 

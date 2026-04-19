@@ -137,7 +137,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950 py-8 transition-colors duration-500">
+      <div className="min-h-screen bg-slate-50 dark:bg-black py-8 transition-colors duration-500">
         {view === 'welcome' && (
           <WelcomeScreen 
             onStart={() => {
