@@ -255,7 +255,11 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
     Requisitos Obrigatórios:
     1. A avaliação deve ser estritamente baseada nos tópicos fornecidos.
     2. O número de questões deve ser exatamente ${input.numQuestions}.
-    3. O tipo de questões deve respeitar a escolha: ${input.questionType}.
+    3. O tipo de questões deve respeitar RIGOROSAMENTE a escolha: ${input.questionType}.
+       - Se a escolha for "Escolha Múltipla", CADA pergunta gerada DEVE ter obrigatoriamente 4 opções de resposta (ex: A) ... B) ... C) ... D) ...) explícitas dentro do campo "question". O campo "possibleAnswer" deve conter apenas a alínea correcta e uma breve justificação.
+       - Se a escolha for "Perguntas Abertas", as perguntas devem exigir uma interpretação ou desenvolvimento escrito pelo aluno.
+       - Se a escolha for "Preenchimento de Lacunas", insira espaços em branco (______) no texto da "question" para que o aluno complete.
+       - Se a escolha for "Ambos", deve misturar todos estes estilos de pergunta na mesma avaliação.
     4. A soma total das cotações (Cotação Total) de todas as perguntas deve ser exatamente 20 valores.
     5. A linguagem deve ser formal, pedagógica e em Português de Moçambique.
     6. Não coloque os apontamentos em markdowns, pelo que, não adicione asteriscos (* ou **) no texto.
