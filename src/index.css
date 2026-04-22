@@ -6,34 +6,34 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
   /* Set base white and black strictly to the palette bounds */
-  --color-white: #D8F0F0;
-  --color-black: #1f323f;
+  --color-white: #F6FAFD;
+  --color-black: #0A1931;
   
-  /* Neutral scale mapped to custom greens/blacks */
-  --color-slate-50: #D8F0F0; /* Requested Light Background */
-  --color-slate-100: #E4EFEB;
-  --color-slate-200: #C1DCD7;
-  --color-slate-300: #98C5BE;
-  --color-slate-400: #6BA89F;
-  --color-slate-500: #46887E;
-  --color-slate-600: #316C63;
-  --color-slate-700: #03624C; /* Bangladesh Green */
-  --color-slate-800: #03423A;
-  --color-slate-900: #032221; /* Dark Green */
-  --color-slate-950: #1f323f; /* Requested Dark Background */
+  /* Neutral scale mapped to the cool navy/blue palette */
+  --color-slate-50: #F6FAFD;  /* Palette Bottom: Light Bg */
+  --color-slate-100: #E6EEF5; /* Derived */
+  --color-slate-200: #CFE0EF; /* Derived */
+  --color-slate-300: #B3CFE5; /* Palette 2nd: Sky Blue */
+  --color-slate-400: #8CB6D3; /* Derived */
+  --color-slate-500: #679DC1; /* Derived */
+  --color-slate-600: #4A7FA7; /* Palette 3rd: Ocean Blue (Primary Accent) */
+  --color-slate-700: #335D84; /* Derived */
+  --color-slate-800: #1A3D63; /* Palette 4th: Dark Blue */
+  --color-slate-900: #122A45; /* Derived */
+  --color-slate-950: #0A1931; /* Palette Top: Deep Navy */
 
-  /* Primary scale mapped to Mountain Meadow / Caribbean Green */
-  --color-blue-50: #E6FCF2;
-  --color-blue-100: #C5F8E0;
-  --color-blue-200: #9DEECC;
-  --color-blue-300: #69DFB3;
-  --color-blue-400: #2CC295; /* Mountain Meadow */
-  --color-blue-500: #00DF81; /* Caribbean Green */
-  --color-blue-600: #00B86B; 
-  --color-blue-700: #008C51;
-  --color-blue-800: #006F41;
-  --color-blue-900: #005934;
-  --color-blue-950: #00311D;
+  /* Primary scale mapped to the ocean blue */
+  --color-blue-50: #E6EEF5;
+  --color-blue-100: #CFE0EF;
+  --color-blue-200: #B3CFE5;
+  --color-blue-300: #8CB6D3;
+  --color-blue-400: #679DC1;
+  --color-blue-500: #4A7FA7; /* 4A7FA7 Core Primary */
+  --color-blue-600: #3E6A8C; 
+  --color-blue-700: #335D84;
+  --color-blue-800: #1A3D63; /* 1A3D63 Deep Interactive */
+  --color-blue-900: #122A45;
+  --color-blue-950: #0A1931;
 
   /* Re-map indigo to the primary scale to avoid generic colors in Welcome screen */
   --color-indigo-50: var(--color-blue-50);

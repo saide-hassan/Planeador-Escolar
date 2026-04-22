@@ -136,19 +136,19 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
               key={item.id}
               className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards"
             >
-              <div className={`absolute top-0 left-0 w-1 h-full transition-colors ${item.type === 'evaluation' ? 'bg-purple-500/20 group-hover:bg-purple-500' : 'bg-blue-500/20 group-hover:bg-blue-500'}`} />
+              <div className={`absolute top-0 left-0 w-1 h-full transition-colors ${item.type === 'evaluation' ? 'bg-slate-500/30 group-hover:bg-slate-600' : 'bg-blue-500/20 group-hover:bg-blue-500'}`} />
               
               <div className="mb-4 flex-grow">
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${item.type === 'evaluation' ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'}`}>
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${item.type === 'evaluation' ? 'bg-slate-200 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'}`}>
                     {item.type === 'evaluation' ? 'Avaliação' : 'Plano de Aula'}
                   </span>
                 </div>
-                <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${item.type === 'evaluation' ? 'group-hover:text-purple-600 dark:group-hover:text-purple-400' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'}`}>
+                <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${item.type === 'evaluation' ? 'group-hover:text-slate-600 dark:group-hover:text-slate-400' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'}`}>
                   {item.type === 'evaluation' ? (item as Evaluation).topics : (item as LessonPlan).topic}
                 </h3>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border ${item.type === 'evaluation' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-800' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'}`}>
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border ${item.type === 'evaluation' ? 'bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'}`}>
                     {item.type === 'evaluation' ? <FileCheck className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
                     {item.subject}
                   </span>
@@ -179,14 +179,14 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                   <>
                     <button
                       onClick={() => downloadEvaluationDocx(item as Evaluation)}
-                      className="flex-1 px-3 flex items-center justify-center gap-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs"
+                      className="flex-1 px-3 flex items-center justify-center gap-1 bg-slate-600 hover:bg-slate-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs"
                     >
                       <Download className="w-3 h-3" />
                       Avaliação
                     </button>
                     <button
                       onClick={() => downloadEvaluationGridDocx(item as Evaluation)}
-                      className="flex-1 px-3 flex items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs"
+                      className="flex-1 px-3 flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs"
                     >
                       <Download className="w-3 h-3" />
                       Grelha
