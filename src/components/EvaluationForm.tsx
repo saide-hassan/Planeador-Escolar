@@ -9,6 +9,7 @@ import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { saveItem } from '../services/historyService';
 import { getProfile, getProfileSync } from '../services/profileService';
+import { useDownload } from '../contexts/DownloadContext';
 
 interface EvaluationFormProps {
   onBack?: () => void;
@@ -18,6 +19,7 @@ interface EvaluationFormProps {
 
 export default function EvaluationForm({ onBack, initialData, darkMode }: EvaluationFormProps) {
   const [loading, setLoading] = useState(false);
+  const { startDownload } = useDownload();
   const [generatedEval, setGeneratedEval] = useState<Evaluation | null>(null);
   const [error, setError] = useState<string | null>(null);
   
@@ -174,13 +176,13 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
 
   const handleDownloadEval = () => {
     if (generatedEval) {
-      downloadEvaluationDocx(generatedEval);
+      startDownload(() => downloadEvaluationDocx(generatedEval));
     }
   };
 
   const handleDownloadGrid = () => {
     if (generatedEval) {
-      downloadEvaluationGridDocx(generatedEval);
+      startDownload(() => downloadEvaluationGridDocx(generatedEval));
     }
   };
 
@@ -189,7 +191,7 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+      <div className="px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <FileText className="w-6 h-6 text-indigo-500" />

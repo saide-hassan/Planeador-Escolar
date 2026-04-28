@@ -31,7 +31,7 @@ export default function GeneratorTabs({ onBack, onProfile, onLogin, onLogout, in
   return (
     <>
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-50/90 dark:bg-black/90 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 shadow-sm">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 flex flex-col gap-4 md:gap-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">

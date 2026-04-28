@@ -6,6 +6,7 @@ import { downloadDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { savePlan } from '../services/historyService';
 import { getProfile, getProfileSync } from '../services/profileService';
+import { useDownload } from '../contexts/DownloadContext';
 
 interface LessonFormProps {
   onBack?: () => void;
@@ -16,6 +17,7 @@ interface LessonFormProps {
 
 export default function LessonForm({ onBack, initialData, darkMode, toggleTheme }: LessonFormProps) {
   const [loading, setLoading] = useState(false);
+  const { startDownload } = useDownload();
   const [generatedPlan, setGeneratedPlan] = useState<LessonPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
   
@@ -206,7 +208,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+      <div className="px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-blue-500" />
@@ -582,7 +584,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   type="button"
-                  onClick={() => downloadDocx(generatedPlan)}
+                  onClick={() => startDownload(() => downloadDocx(generatedPlan))}
                   className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-all shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30"
                 >
                   <Download className="w-4 h-4" />
