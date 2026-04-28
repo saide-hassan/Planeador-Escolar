@@ -272,6 +272,10 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
        - Resposta Possível (a chave de correcção)
        - Cotação Parcial (se a pergunta tiver alíneas, indique a cotação de cada uma, ou o mesmo que a total se for única)
        - Cotação Total (a cotação total da pergunta)
+    ${input.generateVariants ? `9. O utilizador solicitou DUAS VARIANTES desta avaliação (Variante A e Variante B).
+       - DEVE retornar o campo "variants" (um array de duas variantes) em vez de "questions".
+       - Variante A e Variante B devem ter perguntas diferentes (quando apropriado), mantendo a mesma estrutura, nível de dificuldade e baseadas nos mesmos tópicos e com a mesma distribuição de cotações totais (20 valores cada variante).
+       - Se for uma prova de português (com "readingText"), o mesmo texto DEVE ser usado para ambas as variantes, alterando-se apenas as perguntas.` : ''}
 
     Retorne APENAS um JSON válido com a seguinte estrutura, sem markdown ou texto adicional:
     {
@@ -280,7 +284,33 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
         "author": "Autor do Texto (opcional)",
         "paragraphs": ["Parágrafo 1", "Parágrafo 2"]
       },
-      "questions": [
+      ${input.generateVariants ? `"variants": [
+        {
+          "name": "Variante A",
+          "questions": [
+            {
+              "number": 1,
+              "knowledgeLevel": "Compreensão",
+              "content": "...",
+              "objective": "...",
+              "question": "...",
+              "possibleAnswer": "...",
+              "partialScore": 2.5,
+              "totalScore": 2.5
+            }
+          ]
+        },
+        {
+          "name": "Variante B",
+          "questions": [
+            {
+              "number": 1,
+              "knowledgeLevel": "Compreensão",
+              ...
+            }
+          ]
+        }
+      ]` : `"questions": [
         {
           "number": 1,
           "knowledgeLevel": "Compreensão",
@@ -291,7 +321,7 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
           "partialScore": 2.5,
           "totalScore": 2.5
         }
-      ]
+      ]`}
     }
     O campo "readingText" é opcional e só deve ser incluído se houver um texto de leitura/interpretação.
   `;
@@ -340,7 +370,8 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
         ...input,
         type: 'evaluation',
         readingText: data.readingText,
-        questions: data.questions
+        questions: data.questions || [],
+        variants: data.variants
       };
     } catch (parseError) {
       console.error("Erro ao fazer parse do JSON:", parseError);

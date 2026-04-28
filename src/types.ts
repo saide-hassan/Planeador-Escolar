@@ -57,6 +57,7 @@ export interface EvaluationInput {
   date: string;
   classes: string;
   teacher: string;
+  generateVariants?: boolean;
   attachments?: {
     name: string;
     type: string;
@@ -82,10 +83,16 @@ export interface ReadingText {
   paragraphs: string[];
 }
 
+export interface EvaluationVariant {
+  name: string;
+  questions: EvaluationQuestion[];
+}
+
 export interface Evaluation extends EvaluationInput {
   type?: 'evaluation';
   readingText?: ReadingText;
   questions: EvaluationQuestion[];
+  variants?: EvaluationVariant[];
   id?: string;
   createdAt?: string;
 }

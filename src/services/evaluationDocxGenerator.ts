@@ -15,6 +15,128 @@ export const downloadEvaluationDocx = (evaluation: Evaluation) => {
     ? evaluation.term 
     : `${evaluation.term} Trimestre`;
 
+  const variants = evaluation.variants && evaluation.variants.length > 0
+    ? evaluation.variants
+    : [{ name: '', questions: evaluation.questions }];
+
+  const children: any[] = [];
+
+  variants.forEach((variant, index) => {
+    // Add page break before subsequent variants
+    if (index > 0) {
+      children.push(new Paragraph({
+        text: "",
+        pageBreakBefore: true
+      }));
+    }
+
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({ text: `${evaluation.schoolType} ${evaluation.schoolName}`, bold: true }),
+        ],
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        children: [
+          new TextRun({ text: `${evaluation.evaluationType} de ${evaluation.subject} - ${formattedGrade} - ${formattedTerm} - ${year}`, bold: true }),
+        ],
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 200 },
+      })
+    );
+
+    if (variant.name) {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({ text: variant.name, bold: true, size: 28 }),
+          ],
+          alignment: AlignmentType.CENTER,
+          spacing: { after: 200 },
+        })
+      );
+    }
+
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({ text: `Data: ${format(new Date(evaluation.date), 'dd/MM/yyyy')}`, bold: true }),
+        ],
+        alignment: AlignmentType.RIGHT,
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        children: [
+          new TextRun({ text: `Duração: ${evaluation.duration} min`, bold: true }),
+        ],
+        alignment: AlignmentType.RIGHT,
+        spacing: { after: 400 },
+      })
+    );
+
+    if (evaluation.readingText && (evaluation.readingText.title || (evaluation.readingText.paragraphs && evaluation.readingText.paragraphs.length > 0))) {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({ text: "Texto", bold: true }),
+          ],
+          alignment: AlignmentType.CENTER,
+          spacing: { after: 200 },
+        })
+      );
+
+      if (evaluation.readingText.title) {
+        children.push(
+          new Paragraph({
+            text: evaluation.readingText.title,
+            heading: "Heading2",
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 200 },
+          })
+        );
+      }
+
+      if (evaluation.readingText.author) {
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: evaluation.readingText.author, italics: true }),
+            ],
+            alignment: AlignmentType.RIGHT,
+            spacing: { after: 200 },
+          })
+        );
+      }
+
+      (evaluation.readingText.paragraphs || []).forEach(p => {
+        children.push(
+          new Paragraph({
+            text: p,
+            alignment: AlignmentType.JUSTIFIED,
+            spacing: { after: 200 },
+          })
+        );
+      });
+      
+      children.push(new Paragraph({ text: "", spacing: { after: 400 } }));
+    }
+
+    variant.questions.forEach((q) => {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${q.number}. `, bold: true }),
+            new TextRun({ text: q.question }),
+            new TextRun({ text: `\t(${q.totalScore} val.)`, bold: true }),
+          ],
+          spacing: { after: 400 },
+        })
+      );
+    });
+  });
+
   const doc = new Document({
     styles: {
       default: {
@@ -30,80 +152,7 @@ export const downloadEvaluationDocx = (evaluation: Evaluation) => {
     sections: [
       {
         properties: {},
-        children: [
-          new Paragraph({
-            children: [
-              new TextRun({ text: `${evaluation.schoolType} ${evaluation.schoolName}`, bold: true }),
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({ text: `${evaluation.evaluationType} de ${evaluation.subject} - ${formattedGrade} - ${formattedTerm} - ${year}`, bold: true }),
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({ text: `Data: ${format(new Date(evaluation.date), 'dd/MM/yyyy')}`, bold: true }),
-            ],
-            alignment: AlignmentType.RIGHT,
-            spacing: { after: 100 },
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({ text: `Duração: ${evaluation.duration} min`, bold: true }),
-            ],
-            alignment: AlignmentType.RIGHT,
-            spacing: { after: 400 },
-          }),
-
-          ...(evaluation.readingText && (evaluation.readingText.title || (evaluation.readingText.paragraphs && evaluation.readingText.paragraphs.length > 0)) ? [
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Texto", bold: true }),
-              ],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 200 },
-            }),
-            ...(evaluation.readingText.title ? [
-              new Paragraph({
-                text: evaluation.readingText.title,
-                heading: "Heading2",
-                alignment: AlignmentType.CENTER,
-                spacing: { after: 200 },
-              }),
-            ] : []),
-            ...(evaluation.readingText.author ? [
-              new Paragraph({
-                children: [
-                  new TextRun({ text: evaluation.readingText.author, italics: true }),
-                ],
-                alignment: AlignmentType.RIGHT,
-                spacing: { after: 200 },
-              })
-            ] : []),
-            ...(evaluation.readingText.paragraphs || []).map(p => new Paragraph({
-              text: p,
-              alignment: AlignmentType.JUSTIFIED,
-              spacing: { after: 200 },
-            })),
-            new Paragraph({ text: "", spacing: { after: 400 } }),
-          ] : []),
-
-          ...evaluation.questions.map((q) => {
-            return new Paragraph({
-              children: [
-                new TextRun({ text: `${q.number}. `, bold: true }),
-                new TextRun({ text: q.question }),
-                new TextRun({ text: `\t(${q.totalScore} val.)`, bold: true }),
-              ],
-              spacing: { after: 400 },
-            });
-          }),
-        ],
+        children: children,
       },
     ],
   });
@@ -114,6 +163,109 @@ export const downloadEvaluationDocx = (evaluation: Evaluation) => {
 };
 
 export const downloadEvaluationGridDocx = (evaluation: Evaluation) => {
+  const variants = evaluation.variants && evaluation.variants.length > 0
+    ? evaluation.variants
+    : [{ name: '', questions: evaluation.questions }];
+
+  const children: any[] = [];
+
+  variants.forEach((variant, index) => {
+    if (index > 0) {
+      children.push(new Paragraph({ text: "", pageBreakBefore: true }));
+    }
+
+    children.push(
+      new Paragraph({
+        text: variant.name ? `Grelha de Avaliação - ${variant.name}` : "Grelha de Avaliação",
+        heading: "Heading1",
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 400 },
+      }),
+      
+      new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        },
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({ 
+                children: [
+                  new Paragraph({ children: [new TextRun({ text: `${evaluation.schoolType} ` }), new TextRun({ text: evaluation.schoolName, bold: true })] }),
+                  new Paragraph({ children: [new TextRun({ text: "Nome do Professor:", bold: true }), new TextRun({ text: ` ${evaluation.teacher}` })] }),
+                  new Paragraph({ children: [new TextRun({ text: "Disciplina:", bold: true }), new TextRun({ text: ` ${evaluation.subject}` })] }),
+                  new Paragraph({ children: [new TextRun({ text: "Classe:", bold: true }), new TextRun({ text: ` ${evaluation.grade}` })] }),
+                  new Paragraph({ children: [new TextRun({ text: "Tipo de Avaliação:", bold: true }), new TextRun({ text: ` ${evaluation.evaluationType}` })] }),
+                ]
+              }),
+              new TableCell({ 
+                children: [
+                  new Paragraph({ children: [new TextRun({ text: "Data:", bold: true }), new TextRun({ text: ` ${format(new Date(evaluation.date), 'dd/MM/yyyy')}` })], alignment: AlignmentType.RIGHT }),
+                  new Paragraph({ children: [new TextRun({ text: "Trimestre:", bold: true }), new TextRun({ text: ` ${evaluation.term}` })], alignment: AlignmentType.RIGHT }),
+                  new Paragraph({ children: [new TextRun({ text: "Turmas:", bold: true }), new TextRun({ text: ` ${evaluation.classes}` })], alignment: AlignmentType.RIGHT }),
+                  new Paragraph({ children: [new TextRun({ text: "Duração:", bold: true }), new TextRun({ text: ` ${evaluation.duration} min` })], alignment: AlignmentType.RIGHT }),
+                ]
+              }),
+            ],
+          }),
+        ],
+      }),
+
+      new Paragraph({ text: "", spacing: { after: 400 } }),
+
+      new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        margins: {
+          top: 150,
+          bottom: 150,
+          left: 150,
+          right: 150,
+        },
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Nº", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Nível de Conhecimento", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Conteúdo", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Objectivo", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Pergunta", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Resposta Possível", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ columnSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Cotação", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+            ],
+          }),
+          new TableRow({
+            tableHeader: true,
+            children: [
+              new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Parcial", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Total", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+            ]
+          }),
+          ...variant.questions.map(q => 
+            new TableRow({
+              children: [
+                new TableCell({ children: [new Paragraph({ text: q.number.toString(), alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.knowledgeLevel, alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.content, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.objective, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.question, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.possibleAnswer, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.partialScore.toString(), alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+                new TableCell({ children: [new Paragraph({ text: q.totalScore.toString(), alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
+              ]
+            })
+          )
+        ],
+      })
+    );
+  });
+
   const doc = new Document({
     sections: [
       {
@@ -124,96 +276,7 @@ export const downloadEvaluationGridDocx = (evaluation: Evaluation) => {
             },
           },
         },
-        children: [
-          new Paragraph({
-            text: "Grelha de Avaliação",
-            heading: "Heading1",
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 400 },
-          }),
-          
-          new Table({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            borders: {
-              top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-              insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            },
-            rows: [
-              new TableRow({
-                children: [
-                  new TableCell({ 
-                    children: [
-                      new Paragraph({ children: [new TextRun({ text: `${evaluation.schoolType} ` }), new TextRun({ text: evaluation.schoolName, bold: true })] }),
-                      new Paragraph({ children: [new TextRun({ text: "Nome do Professor:", bold: true }), new TextRun({ text: ` ${evaluation.teacher}` })] }),
-                      new Paragraph({ children: [new TextRun({ text: "Disciplina:", bold: true }), new TextRun({ text: ` ${evaluation.subject}` })] }),
-                      new Paragraph({ children: [new TextRun({ text: "Classe:", bold: true }), new TextRun({ text: ` ${evaluation.grade}` })] }),
-                      new Paragraph({ children: [new TextRun({ text: "Tipo de Avaliação:", bold: true }), new TextRun({ text: ` ${evaluation.evaluationType}` })] }),
-                    ]
-                  }),
-                  new TableCell({ 
-                    children: [
-                      new Paragraph({ children: [new TextRun({ text: "Data:", bold: true }), new TextRun({ text: ` ${format(new Date(evaluation.date), 'dd/MM/yyyy')}` })], alignment: AlignmentType.RIGHT }),
-                      new Paragraph({ children: [new TextRun({ text: "Trimestre:", bold: true }), new TextRun({ text: ` ${evaluation.term}` })], alignment: AlignmentType.RIGHT }),
-                      new Paragraph({ children: [new TextRun({ text: "Turmas:", bold: true }), new TextRun({ text: ` ${evaluation.classes}` })], alignment: AlignmentType.RIGHT }),
-                      new Paragraph({ children: [new TextRun({ text: "Duração:", bold: true }), new TextRun({ text: ` ${evaluation.duration} min` })], alignment: AlignmentType.RIGHT }),
-                    ]
-                  }),
-                ],
-              }),
-            ],
-          }),
-
-          new Paragraph({ text: "", spacing: { after: 400 } }),
-
-          new Table({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            margins: {
-              top: 150,
-              bottom: 150,
-              left: 150,
-              right: 150,
-            },
-            rows: [
-              new TableRow({
-                tableHeader: true,
-                children: [
-                  new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Nº", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Nível de Conhecimento", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Conteúdo", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Objectivo", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Pergunta", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ rowSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Resposta Possível", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ columnSpan: 2, children: [new Paragraph({ children: [new TextRun({ text: "Cotação", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                ],
-              }),
-              new TableRow({
-                tableHeader: true,
-                children: [
-                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Parcial", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: "Total", bold: true })], alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                ]
-              }),
-              ...evaluation.questions.map(q => 
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: q.number.toString(), alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.knowledgeLevel, alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.content, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.objective, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.question, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.possibleAnswer, alignment: AlignmentType.JUSTIFIED })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.partialScore.toString(), alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                    new TableCell({ children: [new Paragraph({ text: q.totalScore.toString(), alignment: AlignmentType.CENTER })], verticalAlign: VerticalAlign.CENTER }),
-                  ]
-                })
-              )
-            ],
-          }),
-        ],
+        children: children,
       },
     ],
   });

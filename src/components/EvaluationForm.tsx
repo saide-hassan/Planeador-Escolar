@@ -43,7 +43,8 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
     date: new Date().toISOString().split('T')[0],
     classes: '',
     teacher: profile?.teacherName || '',
-    otherDetails: ''
+    otherDetails: '',
+    generateVariants: false
   });
 
   useEffect(() => {
@@ -62,7 +63,8 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
         date: initialData.date ? (initialData.date.includes('T') ? initialData.date.split('T')[0] : initialData.date) : new Date().toISOString().split('T')[0],
         classes: initialData.classes || '',
         teacher: initialData.teacher || '',
-        otherDetails: initialData.otherDetails || ''
+        otherDetails: initialData.otherDetails || '',
+        generateVariants: initialData.generateVariants || false
       });
       
       if (initialData.attachments) {
@@ -353,6 +355,38 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
                   placeholder="Ex: Matemática"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center mb-6">
+              <label
+                htmlFor="generateVariants"
+                className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-xl border transition-all duration-200 select-none ${
+                  formData.generateVariants 
+                    ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 shadow-sm shadow-blue-500/10' 
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm'
+                }`}
+              >
+                <div className={`relative flex items-center justify-center w-5 h-5 rounded border transition-colors ${
+                  formData.generateVariants 
+                    ? 'border-blue-500 bg-blue-500' 
+                    : 'border-slate-300 dark:border-slate-600 bg-transparent'
+                }`}>
+                  <input
+                    type="checkbox"
+                    id="generateVariants"
+                    name="generateVariants"
+                    checked={formData.generateVariants || false}
+                    onChange={(e) => setFormData({ ...formData, generateVariants: e.target.checked })}
+                    className="opacity-0 absolute w-full h-full cursor-pointer"
+                  />
+                  {formData.generateVariants && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
+                </div>
+                <span className={`text-sm font-semibold transition-colors ${
+                  formData.generateVariants ? 'text-blue-700 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'
+                }`}>
+                  Duas Variantes (A e B)
+                </span>
+              </label>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
