@@ -70,7 +70,7 @@ export default function GeneratorTabs({ onBack, onProfile, onLogin, onLogout, in
                 }`}
               >
                 <BookOpen className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'lesson' ? 'scale-110 text-blue-600 dark:text-blue-400' : 'scale-100'}`} />
-                <span>Plano de Aula</span>
+                <span>Plano</span>
               </button>
               
               <button
@@ -82,7 +82,7 @@ export default function GeneratorTabs({ onBack, onProfile, onLogin, onLogout, in
                 }`}
               >
                 <FileCheck className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'evaluation' ? 'scale-110 text-indigo-600 dark:text-indigo-400' : 'scale-100'}`} />
-                <span>Gerar Avaliação</span>
+                <span>Avaliação</span>
               </button>
 
               <button
