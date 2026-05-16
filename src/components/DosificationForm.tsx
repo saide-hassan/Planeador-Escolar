@@ -431,35 +431,6 @@ export default function DosificationForm({ onBack, initialData, darkMode, toggle
                   </button>
                 </div>
               </div>
-
-              {/* Table Preview */}
-              <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm">
-                <table className="w-full text-left border-collapse min-w-[1000px]">
-                  <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
-                      <th className="px-4 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Semana</th>
-                      <th className="px-4 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Unidade</th>
-                      <th className="px-4 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Conteúdos</th>
-                      <th className="px-4 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Objectivos</th>
-                      <th className="px-4 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nº Aulas</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {generatedDosification.weeks.map((week, idx) => (
-                      <tr key={idx} className="border-b border-slate-100 dark:border-slate-900 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                        <td className="px-4 py-4">
-                          <div className="font-semibold text-slate-900 dark:text-white">{week.weekNumber}</div>
-                          <div className="text-xs text-slate-500">{week.dates}</div>
-                        </td>
-                        <td className="px-4 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-[150px]">{week.units}</td>
-                        <td className="px-4 py-4 text-sm text-slate-800 dark:text-slate-300 whitespace-pre-wrap">{week.contents}</td>
-                        <td className="px-4 py-4 text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap">{week.objectives}</td>
-                        <td className="px-4 py-4 text-sm font-medium text-center text-slate-600 dark:text-slate-400">{week.numLessons}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
           )}
         </div>
