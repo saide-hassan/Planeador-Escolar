@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { HistoryItem, LessonPlan, Evaluation } from '../types';
+import { HistoryItem, LessonPlan, Evaluation, Dosification } from '../types';
 import { getHistory, deleteItem, clearHistory } from '../services/historyService';
-import { downloadDocx } from '../services/docxGenerator';
+import { downloadDocx, downloadDosificationDocx } from '../services/docxGenerator';
 import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/evaluationDocxGenerator';
 import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, FileCheck } from 'lucide-react';
 import { format } from 'date-fns';
@@ -58,7 +58,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
   return (
     <>
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center justify-between w-full sm:w-auto gap-4">
             <button
@@ -123,7 +123,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
           </div>
         ) : items.length === 0 ? (
         <div className="text-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-500">
-          <div className="bg-slate-100 dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-white dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-slate-400" />
           </div>
           <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">Nenhum item salvo</h3>
@@ -142,23 +142,45 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
               
               <div className="mb-4 flex-grow">
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${item.type === 'evaluation' ? 'bg-slate-200 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'}`}>
-                    {item.type === 'evaluation' ? 'Avaliação' : 'Plano de Aula'}
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
+                    item.type === 'evaluation' 
+                      ? 'bg-slate-200 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300' 
+                      : item.type === 'dosification'
+                      ? 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300'
+                      : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                  }`}>
+                    {item.type === 'evaluation' ? 'Avaliação' : item.type === 'dosification' ? 'Dosificação' : 'Plano de Aula'}
                   </span>
                 </div>
-                <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${item.type === 'evaluation' ? 'group-hover:text-slate-600 dark:group-hover:text-slate-400' : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'}`}>
-                  {item.type === 'evaluation' ? (item as Evaluation).topics : (item as LessonPlan).topic}
+                <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${
+                  item.type === 'evaluation' 
+                    ? 'group-hover:text-slate-600 dark:group-hover:text-slate-400' 
+                    : item.type === 'dosification'
+                    ? 'group-hover:text-orange-600 dark:group-hover:text-orange-400'
+                    : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                }`}>
+                  {item.type === 'evaluation' 
+                    ? (item as Evaluation).topics 
+                    : item.type === 'dosification'
+                    ? `${(item as Dosification).term} - ${(item as Dosification).subject}`
+                    : (item as LessonPlan).topic}
                 </h3>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border ${item.type === 'evaluation' ? 'bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'}`}>
-                    {item.type === 'evaluation' ? <FileCheck className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border ${
+                    item.type === 'evaluation' 
+                      ? 'bg-white dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' 
+                      : item.type === 'dosification'
+                      ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-800'
+                      : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'
+                  }`}>
+                    {item.type === 'evaluation' ? <FileCheck className="w-3 h-3" /> : item.type === 'dosification' ? <Calendar className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
                     {item.subject}
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                     {item.grade}
                   </span>
                   {item.type === 'evaluation' && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                       {(item as Evaluation).evaluationType}
                     </span>
                   )}
@@ -168,7 +190,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
               <div className="space-y-2 mb-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <Calendar className="w-4 h-4 text-slate-400" />
-                  <span>{item.type === 'evaluation' ? 'Data' : 'Aula'}: {format(new Date(item.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
+                  <span>{item.type === 'evaluation' ? 'Data' : item.type === 'dosification' ? 'Ano' : 'Aula'}: {item.type === 'dosification' ? (item as Dosification).year : format(new Date(item.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <Clock className="w-4 h-4 text-slate-400" />
@@ -194,6 +216,14 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                       Grelha
                     </button>
                   </>
+                ) : item.type === 'dosification' ? (
+                  <button
+                    onClick={() => startDownload(() => downloadDosificationDocx(item as Dosification))}
+                    className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
+                  >
+                    <Download className="w-4 h-4" />
+                    Baixar
+                  </button>
                 ) : (
                   <button
                     onClick={() => startDownload(() => downloadDocx(item as LessonPlan))}
@@ -206,7 +236,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                 
                 <button
                   onClick={() => onEdit(item)}
-                  className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
+                  className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-white dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
                   title="Editar"
                 >
                   <Edit className="w-4 h-4" />
@@ -248,7 +278,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setConfirmAction(null)}
-                className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors font-medium"
+                className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors font-medium"
               >
                 Cancelar
               </button>

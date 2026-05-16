@@ -49,7 +49,7 @@ export default function SettingsMenu({ onProfile, onLogin, onLogout, darkMode, t
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
+        className="p-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
         aria-label="Definições"
       >
         <Settings className="w-5 h-5" />
@@ -84,7 +84,7 @@ export default function SettingsMenu({ onProfile, onLogin, onLogout, darkMode, t
               <span>Perfil do Professor</span>
             </button>
 
-            <div className="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
+            <div className="h-px bg-white dark:bg-slate-700 my-1"></div>
 
             {user ? (
               <button

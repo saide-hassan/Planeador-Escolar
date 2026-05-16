@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="bg-white p-8 rounded-xl shadow-xl max-w-lg w-full border border-red-200">
             <h1 className="text-2xl font-bold text-red-600 mb-4">Algo correu mal</h1>
             <p className="text-slate-600 mb-4">Ocorreu um erro inesperado na aplicação.</p>
-            <div className="bg-slate-100 p-4 rounded-lg overflow-auto text-xs font-mono text-slate-800 mb-6">
+            <div className="bg-white p-4 rounded-lg overflow-auto text-xs font-mono text-slate-800 mb-6">
               {this.state.error?.toString()}
             </div>
             <button

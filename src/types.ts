@@ -97,5 +97,42 @@ export interface Evaluation extends EvaluationInput {
   createdAt?: string;
 }
 
-export type HistoryItem = LessonPlan | Evaluation;
+export type HistoryItem = LessonPlan | Evaluation | Dosification;
+
+export interface DosificationInput {
+  school: string;
+  subject: string;
+  grade: string;
+  term: '1º Trimestre' | '2º Trimestre' | '3º Trimestre';
+  year: string;
+  startDate: string;
+  endDate: string;
+  program: string;
+  teacher: string;
+  attachments?: {
+    name: string;
+    type: string;
+    data: string;
+    isText: boolean;
+  }[];
+}
+
+export interface DosificationWeek {
+  weekNumber: string;
+  dates: string;
+  units: string;
+  contents: string;
+  objectives: string;
+  competencies: string;
+  methodology: string;
+  materials: string;
+  numLessons: string;
+}
+
+export interface Dosification extends DosificationInput {
+  type?: 'dosification';
+  weeks: DosificationWeek[];
+  id?: string;
+  createdAt?: string;
+}
 

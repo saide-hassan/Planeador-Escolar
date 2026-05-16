@@ -203,7 +203,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setIsLogoutConfirmOpen(false)}
-                className="flex-1 px-4 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors text-sm"
+                className="flex-1 px-4 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-colors text-sm"
               >
                 Voltar
               </button>

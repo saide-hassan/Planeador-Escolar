@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { LessonPlan, LessonPlanInput, Evaluation, EvaluationInput } from "../types";
+import { LessonPlan, LessonPlanInput, Evaluation, EvaluationInput, Dosification, DosificationInput } from "../types";
 
 const getAiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -16,9 +16,9 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 3): Promise<any> {
   for (let i = 0; i < retries; i++) {
     try {
-      // Add a timeout of 45 seconds to prevent hanging indefinitely
+      // Add a timeout of 90 seconds to prevent hanging indefinitely
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Timeout: A IA demorou muito para responder.")), 45000)
+        setTimeout(() => reject(new Error("Timeout: A IA demorou muito para responder.")), 90000)
       );
       
       const apiPromise = ai.models.generateContent({
@@ -47,8 +47,7 @@ async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents
 }
 
 export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
-  // Using gemini-3-flash-preview for better stability and speed
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-flash-latest";
   const ai = getAiClient();
   
   const prompt = `
@@ -231,7 +230,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
 }
 
 export async function generateEvaluation(input: EvaluationInput): Promise<Evaluation> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-flash-latest";
   const ai = getAiClient();
   
   const prompt = `
@@ -379,6 +378,115 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
     }
   } catch (error: any) {
     console.error("Erro ao gerar avaliação:", error);
+    throw error;
+  }
+}
+
+export async function generateDosification(input: DosificationInput): Promise<Dosification> {
+  const model = "gemini-flash-latest";
+  const ai = getAiClient();
+  
+  const prompt = `
+    Você é um especialista em pedagogia com vasta experiência no currículo moçambicano (1ª à 12ª classe).
+    Sua tarefa é criar uma Dosificação Trimestral detalhada para a disciplina de ${input.subject}.
+
+    Dados fornecidos:
+    Escola: ${input.school}
+    Disciplina: ${input.subject}
+    Classe: ${input.grade}
+    Trimestre: ${input.term}
+    Ano: ${input.year}
+    Data de Início: ${input.startDate}
+    Data de Fim: ${input.endDate}
+    Professor: ${input.teacher}
+    Trimestre Alvo: ${input.term}
+
+    Instruções Críticas:
+    1. ANALISE AS IMAGENS E ANEXOS: O usuário forneceu imagens de um modelo de dosificação real. Você DEVE seguir rigorosamente a estrutura, o tom e a forma como os conteúdos são distribuídos (ex: Semanas, Conteúdos Programados, Objectivos Específicos, Competências, etc.).
+    2. TRIMESTRE ALVO: Extraia os conteúdos do Programa da Disciplina especificamente para o ${input.term}.
+    3. DISTRIBUIÇÃO: Calcule o número de semanas entre ${input.startDate} e ${input.endDate} e distribua os conteúdos de forma equilibrada, seguindo o exemplo das fotos.
+    4. CAMPOS POR SEMANA (Baseado no modelo das fotos):
+       - weekNumber: Texto (ex: "1ª Semana")
+       - dates: Intervalo de datas (ex: "02/03 a 06/03")
+       - units: Unidade temática (ex: "Unidade I: Textos Normativos")
+       - contents: Conteúdos Programados detalhados (incluindo sub-tópicos se houver)
+       - objectives: Objectivos Específicos (tópicos claros e pedagógicos)
+       - competencies: Competências Básicas
+       - methodology: Sugestões Metodológicas
+       - materials: Sugestões de Materiais (Manuais, Gramáticas, etc.)
+       - numLessons: Número de aulas previsto para aquela semana.
+    5. FOCO REGIONAL: Utilize terminologia pedagógica restrita ao ensino em Moçambique.
+    6. FORMATO: Linguagem formal, texto limpo, SEM markdown (** ou #).
+
+    Retorne APENAS um JSON válido:
+    {
+      "weeks": [
+        {
+          "weekNumber": "Semana 1",
+          "dates": "...",
+          "units": "...",
+          "contents": "...",
+          "objectives": "...",
+          "competencies": "...",
+          "methodology": "...",
+          "materials": "...",
+          "numLessons": "..."
+        }
+      ]
+    }
+  `;
+
+  try {
+    const parts: any[] = [
+      { text: prompt }
+    ];
+
+    if (input.attachments && input.attachments.length > 0) {
+      input.attachments.forEach(file => {
+        if (file.isText) {
+          parts.push({ text: `\n\n[ANEXO: ${file.name}]\n${file.data}\n[FIM DO ANEXO]` });
+        } else {
+          parts.push({
+            inlineData: {
+              mimeType: file.type,
+              data: file.data
+            }
+          });
+        }
+      });
+    }
+
+    const response = await generateContentWithRetry(ai, model, { parts });
+
+    let text = response.text;
+    console.log("Resposta bruta da IA (Dosificação):", text);
+
+    if (!text) throw new Error("A IA retornou uma resposta vazia.");
+
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      text = jsonMatch[1].trim();
+    } else {
+      const firstBrace = text.indexOf('{');
+      const lastBrace = text.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        text = text.substring(firstBrace, lastBrace + 1);
+      }
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return {
+        ...input,
+        type: 'dosification',
+        weeks: data.weeks || []
+      };
+    } catch (parseError) {
+      console.error("Erro ao fazer parse do JSON de dosificação:", parseError);
+      throw new Error("A IA gerou uma resposta inválida para a dosificação. Tente novamente.");
+    }
+  } catch (error: any) {
+    console.error("Erro ao gerar dosificação:", error);
     throw error;
   }
 }

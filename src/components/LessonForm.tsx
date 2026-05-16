@@ -275,7 +275,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
               </div>
             </div>
 
-            <div className="h-px bg-slate-100 dark:bg-slate-800 w-full"></div>
+            <div className="h-px bg-white dark:bg-slate-800 w-full"></div>
 
             {/* Section: Detalhes da Aula */}
             <div className="space-y-6">
@@ -403,7 +403,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
               </div>
             </div>
 
-            <div className="h-px bg-slate-100 dark:bg-slate-800 w-full"></div>
+            <div className="h-px bg-white dark:bg-slate-800 w-full"></div>
 
             {/* Section: Personalização */}
             <div className="space-y-6">
@@ -445,7 +445,7 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
                       }`}
                     >
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform ${
-                        processingFile || loading ? 'bg-slate-100 dark:bg-slate-800' : 'bg-emerald-100 dark:bg-emerald-900/50 group-hover:scale-110'
+                        processingFile || loading ? 'bg-white dark:bg-slate-800' : 'bg-emerald-100 dark:bg-emerald-900/50 group-hover:scale-110'
                       }`}>
                         {processingFile ? (
                           <Loader2 className="w-6 h-6 animate-spin text-slate-500 dark:text-slate-400" />

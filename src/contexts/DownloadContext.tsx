@@ -70,7 +70,7 @@ export function DownloadProvider({ children }: { children: React.ReactNode }) {
                {isSuccess ? 'O seu download foi concluído com sucesso.' : 'Aguarde um momento enquanto preparamos o seu ficheiro.'}
              </p>
              
-             <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 mb-2 overflow-hidden border border-slate-200 dark:border-slate-700">
+             <div className="w-full bg-white dark:bg-slate-800 rounded-full h-3 mb-2 overflow-hidden border border-slate-200 dark:border-slate-700">
                <div 
                  className={`h-full rounded-full transition-all duration-300 ease-out ${isSuccess ? 'bg-green-500' : 'bg-blue-500'}`}
                  style={{ width: `${progress}%` }}
