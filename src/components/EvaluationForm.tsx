@@ -168,10 +168,10 @@ export default function EvaluationForm({ onBack, initialData, darkMode }: Evalua
       }
 
       setGeneratedEval(result);
-      await saveItem(result);
+      setLoading(false);
+      saveItem(result);
     } catch (err: any) {
       setError(err.message || "Ocorreu um erro ao gerar a avaliação. Por favor, tente novamente.");
-    } finally {
       setLoading(false);
     }
   };

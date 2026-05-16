@@ -135,10 +135,10 @@ export default function DosificationForm({ onBack, initialData, darkMode, toggle
       }
 
       setGeneratedDosification(dosification);
-      await saveItem(dosification);
+      setLoading(false);
+      saveItem(dosification);
     } catch (err: any) {
       setError(err?.message || 'Ocorreu um erro ao gerar a dosificação.');
-    } finally {
       setLoading(false);
     }
   };

@@ -186,7 +186,8 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
       }
 
       setGeneratedPlan(plan);
-      await savePlan(plan);
+      setLoading(false);
+      savePlan(plan);
     } catch (err: any) {
       let errorMessage = err?.message || 'Ocorreu um erro desconhecido.';
       
@@ -201,7 +202,6 @@ export default function LessonForm({ onBack, initialData, darkMode, toggleTheme 
 
       setError(errorMessage);
       console.error("Detalhes do erro:", err);
-    } finally {
       setLoading(false);
     }
   };
