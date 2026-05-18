@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, FileText, Download, Sparkles, ChevronDown, Check, UploadCloud, Building2, BookOpen, Sliders, Calendar, X, File as FileIcon } from 'lucide-react';
-import { DosificationInput, Dosification } from '../types';
-import { generateDosification } from '../services/ai';
-import { downloadDosificationDocx } from '../services/docxGenerator';
+import { DosificationInput, Dosification, BiWeeklyPlan } from '../types';
+import { generateDosification, generateBiWeeklyPlan } from '../services/ai';
+import { downloadDosificationDocx, downloadBiWeeklyPlanDocx } from '../services/docxGenerator';
 import { processFile, ProcessedFile } from '../utils/fileProcessor';
 import { saveItem } from '../services/historyService';
 import { getProfile, getProfileSync } from '../services/profileService';
@@ -19,6 +19,9 @@ export default function DosificationForm({ onBack, initialData, darkMode, toggle
   const [loading, setLoading] = useState(false);
   const { startDownload } = useDownload();
   const [generatedDosification, setGeneratedDosification] = useState<Dosification | null>(null);
+  const [generatedBiWeeklyPlan, setGeneratedBiWeeklyPlan] = useState<BiWeeklyPlan | null>(null);
+  const [loadingBiWeekly, setLoadingBiWeekly] = useState(false);
+  const [selectedStartWeek, setSelectedStartWeek] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -140,6 +143,30 @@ export default function DosificationForm({ onBack, initialData, darkMode, toggle
     } catch (err: any) {
       setError(err?.message || 'Ocorreu um erro ao gerar a dosificação.');
       setLoading(false);
+    }
+  };
+
+  const handleGenerateBiWeekly = async () => {
+    if (!generatedDosification) return;
+    setLoadingBiWeekly(true);
+    setError(null);
+    setGeneratedBiWeeklyPlan(null);
+
+    try {
+      // Get the current week and the next one
+      const selectedIndices = [selectedStartWeek, selectedStartWeek + 1].filter(idx => idx < generatedDosification.weeks.length);
+      
+      const plan = await generateBiWeeklyPlan({
+        dosification: generatedDosification,
+        selectedWeeks: selectedIndices
+      });
+
+      setGeneratedBiWeeklyPlan(plan);
+      setLoadingBiWeekly(false);
+      saveItem(plan);
+    } catch (err: any) {
+      setError(err?.message || 'Ocorreu um erro ao gerar o plano quinzenal.');
+      setLoadingBiWeekly(false);
     }
   };
 
@@ -429,6 +456,82 @@ export default function DosificationForm({ onBack, initialData, darkMode, toggle
                     <Download className="w-5 h-5" />
                     Baixar Dosificação (.docx)
                   </button>
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <h4 className="text-lg font-bold text-slate-900 dark:text-white">Gerar Plano Quinzenal</h4>
+                  </div>
+                  
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
+                    Agora que sua dosificação está pronta, você pode gerar o plano quinzenal (para duas semanas) baseado nela.
+                  </p>
+
+                  <div className="flex flex-col md:flex-row items-end gap-4 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div className="flex-1 space-y-2 w-full">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Escolha a semana de início (15 dias)</label>
+                      <div className="relative">
+                        <select
+                          value={selectedStartWeek}
+                          onChange={(e) => setSelectedStartWeek(parseInt(e.target.value))}
+                          className="w-full appearance-none px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                        >
+                          {generatedDosification.weeks.map((week, idx) => (
+                            <option key={idx} value={idx}>
+                              {week.weekNumber} ({week.dates})
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={loadingBiWeekly}
+                      onClick={handleGenerateBiWeekly}
+                      className="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-900/10"
+                    >
+                      {loadingBiWeekly ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>Gerando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          <span>Gerar Plano Quinzenal</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {generatedBiWeeklyPlan && (
+                    <div className="mt-8 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 animate-in fade-in zoom-in duration-300">
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shadow-sm">
+                            <FileText className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-900 dark:text-white">Plano Quinzenal Gerado!</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Pronto para ser baixado no modelo oficial.</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => startDownload(() => downloadBiWeeklyPlanDocx(generatedBiWeeklyPlan!))}
+                          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all"
+                        >
+                          <Download className="w-5 h-5" />
+                          Baixar Plano (.docx)
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType, AlignmentType, VerticalAlign, BorderStyle, PageOrientation } from "docx";
 import { saveAs } from "file-saver";
 import { format } from 'date-fns';
-import { LessonPlan, Dosification } from "../types";
+import { LessonPlan, Dosification, BiWeeklyPlan } from "../types";
 
 export const downloadDocx = (plan: LessonPlan) => {
   // A subtle academic blue for table headers (Hex: D9E2F3 is a common "Light Blue" in Word themes)
@@ -570,5 +570,149 @@ export const downloadDosificationDocx = (dosification: Dosification) => {
 
   Packer.toBlob(doc).then((blob) => {
     saveAs(blob, `Dosificacao_${dosification.subject}_${dosification.term}_${dosification.year}.docx`);
+  });
+};
+
+export const downloadBiWeeklyPlanDocx = (plan: BiWeeklyPlan) => {
+  const tableHeaderColor = "F2F2F2"; // Neutral light grey
+
+  const tableRows = [
+    // Header Row
+    new TableRow({
+      tableHeader: true,
+      children: [
+        new TableCell({
+          children: [new Paragraph({ children: [new TextRun({ text: "Semanas", bold: true })], alignment: AlignmentType.CENTER })],
+          width: { size: 15, type: WidthType.PERCENTAGE },
+          shading: { fill: tableHeaderColor },
+          verticalAlign: VerticalAlign.CENTER,
+        }),
+        new TableCell({
+          children: [new Paragraph({ children: [new TextRun({ text: "Unidade Temática", bold: true })], alignment: AlignmentType.CENTER })],
+          width: { size: 20, type: WidthType.PERCENTAGE },
+          shading: { fill: tableHeaderColor },
+          verticalAlign: VerticalAlign.CENTER,
+        }),
+        new TableCell({
+          children: [new Paragraph({ children: [new TextRun({ text: "Conteúdos", bold: true })], alignment: AlignmentType.CENTER })],
+          width: { size: 30, type: WidthType.PERCENTAGE },
+          shading: { fill: tableHeaderColor },
+          verticalAlign: VerticalAlign.CENTER,
+        }),
+        new TableCell({
+          children: [new Paragraph({ children: [new TextRun({ text: "Objectivos", bold: true })], alignment: AlignmentType.CENTER })],
+          width: { size: 25, type: WidthType.PERCENTAGE },
+          shading: { fill: tableHeaderColor },
+          verticalAlign: VerticalAlign.CENTER,
+        }),
+        new TableCell({
+          children: [new Paragraph({ children: [new TextRun({ text: "C. H. Semanal", bold: true })], alignment: AlignmentType.CENTER })],
+          width: { size: 10, type: WidthType.PERCENTAGE },
+          shading: { fill: tableHeaderColor },
+          verticalAlign: VerticalAlign.CENTER,
+        }),
+      ],
+    }),
+    ...plan.weeks.map((week) => 
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [
+              new Paragraph({ 
+                children: [new TextRun({ text: week.weekNumber, bold: true })], 
+                alignment: AlignmentType.CENTER,
+                spacing: { before: 120, after: 60 }
+              }),
+              new Paragraph({ 
+                text: week.dates, 
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 120 }
+              }),
+            ],
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 100, bottom: 100, left: 100, right: 100 },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: week.unit, alignment: AlignmentType.CENTER })],
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 100, bottom: 100, left: 100, right: 100 },
+          }),
+          new TableCell({
+            children: week.contents.split('\n').map(line => 
+              new Paragraph({ 
+                text: line, 
+                alignment: AlignmentType.JUSTIFIED, 
+                spacing: { after: 120, line: 360 } 
+              })
+            ),
+            verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
+          }),
+          new TableCell({
+            children: week.objectives.split('\n').map(line => 
+              new Paragraph({ 
+                text: line, 
+                alignment: AlignmentType.JUSTIFIED, 
+                spacing: { after: 120, line: 360 } 
+              })
+            ),
+            verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
+          }),
+          new TableCell({
+            children: [new Paragraph({ text: week.weeklyLoad, alignment: AlignmentType.CENTER })],
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 100, bottom: 100, left: 100, right: 100 },
+          }),
+        ],
+      })
+    ),
+  ];
+
+  const doc = new Document({
+    styles: {
+      default: {
+        document: {
+          run: {
+            font: "Arial",
+            size: 20, // 10pt
+          },
+        },
+      },
+    },
+    sections: [
+      {
+        properties: {
+          page: {
+            size: {
+              orientation: PageOrientation.LANDSCAPE,
+            },
+            margin: {
+              top: 720,
+              bottom: 720,
+              left: 720,
+              right: 720,
+            }
+          },
+        },
+        children: [
+          new Paragraph({
+            text: `Plano quinzenal da disciplina de ${plan.subject} ${plan.grade}ª Classe, ${plan.term} do ano de ${plan.year}`,
+            heading: "Heading1",
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 400 },
+          }),
+          
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: tableRows,
+          }),
+        ],
+      },
+    ],
+  });
+
+  Packer.toBlob(doc).then((blob) => {
+    saveAs(blob, `Plano_Quinzenal_${plan.subject}_${plan.grade}a_Classe.docx`);
   });
 };

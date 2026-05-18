@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { HistoryItem, LessonPlan, Evaluation, Dosification } from '../types';
+import { HistoryItem, LessonPlan, Evaluation, Dosification, BiWeeklyPlan } from '../types';
 import { getHistory, deleteItem, clearHistory } from '../services/historyService';
-import { downloadDocx, downloadDosificationDocx } from '../services/docxGenerator';
+import { downloadDocx, downloadDosificationDocx, downloadBiWeeklyPlanDocx } from '../services/docxGenerator';
 import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/evaluationDocxGenerator';
 import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, FileCheck } from 'lucide-react';
 import { format } from 'date-fns';
@@ -147,9 +147,11 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                       ? 'bg-slate-200 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300' 
                       : item.type === 'dosification'
                       ? 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300'
+                      : item.type === 'biweekly'
+                      ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
                       : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
                   }`}>
-                    {item.type === 'evaluation' ? 'Avaliação' : item.type === 'dosification' ? 'Dosificação' : 'Plano de Aula'}
+                    {item.type === 'evaluation' ? 'Avaliação' : item.type === 'dosification' ? 'Dosificação' : item.type === 'biweekly' ? 'Plano Quinzenal' : 'Plano de Aula'}
                   </span>
                 </div>
                 <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${
@@ -157,12 +159,16 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                     ? 'group-hover:text-slate-600 dark:group-hover:text-slate-400' 
                     : item.type === 'dosification'
                     ? 'group-hover:text-orange-600 dark:group-hover:text-orange-400'
+                    : item.type === 'biweekly'
+                    ? 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
                     : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'
                 }`}>
                   {item.type === 'evaluation' 
                     ? (item as Evaluation).topics 
                     : item.type === 'dosification'
                     ? `${(item as Dosification).term} - ${(item as Dosification).subject}`
+                    : item.type === 'biweekly'
+                    ? `Plano Quinzenal - ${(item as BiWeeklyPlan).subject}`
                     : (item as LessonPlan).topic}
                 </h3>
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -171,9 +177,11 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                       ? 'bg-white dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' 
                       : item.type === 'dosification'
                       ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-800'
+                      : item.type === 'biweekly'
+                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-800'
                       : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'
                   }`}>
-                    {item.type === 'evaluation' ? <FileCheck className="w-3 h-3" /> : item.type === 'dosification' ? <Calendar className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
+                    {item.type === 'evaluation' ? <FileCheck className="w-3 h-3" /> : item.type === 'dosification' ? <Calendar className="w-3 h-3" /> : item.type === 'biweekly' ? <Sparkles className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
                     {item.subject}
                   </span>
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
@@ -190,7 +198,7 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
               <div className="space-y-2 mb-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <Calendar className="w-4 h-4 text-slate-400" />
-                  <span>{item.type === 'evaluation' ? 'Data' : item.type === 'dosification' ? 'Ano' : 'Aula'}: {item.type === 'dosification' ? (item as Dosification).year : format(new Date(item.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
+                  <span>{item.type === 'evaluation' ? 'Data' : (item.type === 'dosification' || item.type === 'biweekly') ? 'Ano' : 'Aula'}: {(item.type === 'dosification' || item.type === 'biweekly') ? (item as any).year : format(new Date(item.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <Clock className="w-4 h-4 text-slate-400" />
@@ -220,6 +228,14 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
                   <button
                     onClick={() => startDownload(() => downloadDosificationDocx(item as Dosification))}
                     className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
+                  >
+                    <Download className="w-4 h-4" />
+                    Baixar
+                  </button>
+                ) : item.type === 'biweekly' ? (
+                  <button
+                    onClick={() => startDownload(() => downloadBiWeeklyPlanDocx(item as BiWeeklyPlan))}
+                    className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
                   >
                     <Download className="w-4 h-4" />
                     Baixar

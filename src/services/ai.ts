@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { LessonPlan, LessonPlanInput, Evaluation, EvaluationInput, Dosification, DosificationInput } from "../types";
+import { LessonPlan, LessonPlanInput, Evaluation, EvaluationInput, Dosification, DosificationInput, BiWeeklyPlan, BiWeeklyPlanInput } from "../types";
 
 const getAiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -487,6 +487,98 @@ export async function generateDosification(input: DosificationInput): Promise<Do
     }
   } catch (error: any) {
     console.error("Erro ao gerar dosificação:", error);
+    throw error;
+  }
+}
+
+export async function generateBiWeeklyPlan(input: BiWeeklyPlanInput): Promise<BiWeeklyPlan> {
+  const model = "gemini-flash-latest";
+  const ai = getAiClient();
+  
+  const selectedWeeksData = input.selectedWeeks.map(idx => input.dosification.weeks[idx]);
+  
+  const prompt = `
+    Você é um especialista em pedagogia moçambicana. Sua tarefa é criar um **Plano Quinzenal** (referente a 2 semanas/15 dias) seguindo RIGOROSAMENTE o modelo visual fornecido na imagem de exemplo.
+
+    DADOS DE BASE (Extraídos da Dosificação):
+    Escola: ${input.dosification.school}
+    Disciplina: ${input.dosification.subject}
+    Classe: ${input.dosification.grade}
+    Trimestre: ${input.dosification.term}
+    Ano: ${input.dosification.year}
+    Professor: ${input.dosification.teacher}
+
+    CONTEÚDOS DAS SEMANAS SELECIONADAS:
+    ${selectedWeeksData.map((w, i) => `
+    Semana ${i + 1}:
+    - Datas: ${w.dates}
+    - Unidade: ${w.units}
+    - Conteúdos: ${w.contents}
+    - Objectivos: ${w.objectives}
+    - Carga Horária Prevista: ${w.numLessons} aulas
+    `).join('\n')}
+
+    INSTRUÇÕES CRÍTICAS:
+    1. MODELO VISUAL: O Plano Quinzenal deve ser formatado para uma tabela com as colunas: Semanas | Unidade Temática | Conteúdos | Objectivos | C. H. Semanal.
+    2. ESTILO DE TEXTO: Use o símbolo "✓" para listar itens nos campos de Conteúdos e Objectivos, exatamente como no modelo da imagem.
+    3. DETALHAMENTO: Expanda os conteúdos e objectivos da dosificação para que fiquem detalhados e profissionais para um plano quinzenal.
+    4. CARGA HORÁRIA: O campo "C. H. Semanal" deve refletir o número de aulas por semana.
+    5. IDIOMA: Português de Moçambique, linguagem formal.
+    6. SEM MARKDOWN: Não use ** ou #.
+
+    Retorne APENAS um JSON válido:
+    {
+      "school": "${input.dosification.school}",
+      "subject": "${input.dosification.subject}",
+      "grade": "${input.dosification.grade}",
+      "term": "${input.dosification.term}",
+      "year": "${input.dosification.year}",
+      "teacher": "${input.dosification.teacher}",
+      "weeks": [
+        {
+          "weekNumber": "...",
+          "dates": "...",
+          "unit": "...",
+          "contents": "✓ Item 1\\n✓ Item 2...",
+          "objectives": "✓ Objectivo 1\\n✓ Objectivo 2...",
+          "weeklyLoad": "..."
+        },
+        {
+          "weekNumber": "...",
+          "dates": "...",
+          "unit": "...",
+          "contents": "...",
+          "objectives": "...",
+          "weeklyLoad": "..."
+        }
+      ]
+    }
+  `;
+
+  try {
+    const response = await generateContentWithRetry(ai, model, { parts: [{ text: prompt }] });
+    let text = response.text;
+    
+    // Extract JSON block
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      text = jsonMatch[1].trim();
+    } else {
+      const firstBrace = text.indexOf('{');
+      const lastBrace = text.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        text = text.substring(firstBrace, lastBrace + 1);
+      }
+    }
+
+    const data = JSON.parse(text);
+    return {
+      ...data,
+      type: 'biweekly',
+      createdAt: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("Erro ao gerar plano quinzenal:", error);
     throw error;
   }
 }

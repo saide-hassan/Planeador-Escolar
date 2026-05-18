@@ -97,7 +97,7 @@ export interface Evaluation extends EvaluationInput {
   createdAt?: string;
 }
 
-export type HistoryItem = LessonPlan | Evaluation | Dosification;
+export type HistoryItem = LessonPlan | Evaluation | Dosification | BiWeeklyPlan;
 
 export interface DosificationInput {
   school: string;
@@ -134,5 +134,30 @@ export interface Dosification extends DosificationInput {
   weeks: DosificationWeek[];
   id?: string;
   createdAt?: string;
+}
+
+export interface BiWeeklyPlan {
+  id?: string;
+  type?: 'biweekly';
+  school: string;
+  subject: string;
+  grade: string;
+  term: string;
+  year: string;
+  teacher: string;
+  weeks: {
+    weekNumber: string;
+    dates: string;
+    unit: string;
+    contents: string;
+    objectives: string;
+    weeklyLoad: string;
+  }[];
+  createdAt?: string;
+}
+
+export interface BiWeeklyPlanInput {
+  dosification: Dosification;
+  selectedWeeks: number[]; // Indices of weeks in the dosification
 }
 
