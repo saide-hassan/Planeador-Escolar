@@ -3,7 +3,7 @@ import { HistoryItem, LessonPlan, Evaluation, Dosification, BiWeeklyPlan } from 
 import { getHistory, deleteItem, clearHistory } from '../services/historyService';
 import { downloadDocx, downloadDosificationDocx, downloadBiWeeklyPlanDocx } from '../services/docxGenerator';
 import { downloadEvaluationDocx, downloadEvaluationGridDocx } from '../services/evaluationDocxGenerator';
-import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, FileCheck } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, Calendar, BookOpen, Clock, FileText, AlertTriangle, X, Edit, FileCheck, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import SettingsMenu from './SettingsMenu';
