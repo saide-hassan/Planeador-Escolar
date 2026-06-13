@@ -9,9 +9,10 @@ interface SettingsMenuProps {
   onLogout?: () => void;
   darkMode: boolean;
   toggleTheme: () => void;
+  minimal?: boolean;
 }
 
-export default function SettingsMenu({ onProfile, onLogin, onLogout, darkMode, toggleTheme }: SettingsMenuProps) {
+export default function SettingsMenu({ onProfile, onLogin, onLogout, darkMode, toggleTheme, minimal }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -49,10 +50,14 @@ export default function SettingsMenu({ onProfile, onLogin, onLogout, darkMode, t
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
+        className={minimal ? (
+          "p-2 rounded-lg text-slate-400 dark:text-[#8aa4c8] hover:text-slate-900 dark:hover:text-white transition-all duration-300 focus:outline-none"
+        ) : (
+          "p-2.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-slate-700 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
+        )}
         aria-label="Definições"
       >
-        <Settings className="w-5 h-5" />
+        <Settings className={minimal ? "w-[24px] h-[24px]" : "w-5 h-5"} />
       </button>
 
       {isOpen && (

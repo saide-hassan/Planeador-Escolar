@@ -408,7 +408,7 @@ export default function DosificationForm({ onBack, initialData, darkMode, toggle
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full md:w-auto flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-orange-900/10 hover:shadow-2xl hover:shadow-orange-900/20 active:scale-95"
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-blue-900/10 hover:shadow-2xl hover:shadow-blue-900/20 active:scale-95"
               >
                 {loading ? (
                   <>

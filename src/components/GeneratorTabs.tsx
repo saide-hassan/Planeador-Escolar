@@ -34,75 +34,84 @@ export default function GeneratorTabs({ onBack, onProfile, onLogin, onLogout, in
   return (
     <>
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 flex flex-col gap-4 md:gap-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={onBack}
-                className="p-2 rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
-                title="Voltar"
-              >
-                <ChevronDown className="w-5 h-5 rotate-90 text-slate-500" />
-              </button>
-              <div className="bg-blue-50 dark:bg-blue-900/30 p-2 rounded-xl">
-                <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
-              </div>
-            </div>
-            
+      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-50/95 dark:bg-[#0d1b2a]/95 backdrop-blur-md shadow-sm">
+        {/* Row 1: 48px height, back left and logo close together, settings right */}
+        <div className="h-[48px] flex items-center justify-between px-[20px] max-w-4xl mx-auto w-full">
+          {/* Left side group: back button + logo side-by-side */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onBack}
+              className="p-1.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-500 dark:text-[#8aa4c8] transition-colors"
+              title="Voltar"
+            >
+              <ChevronDown className="w-5 h-5 rotate-90" />
+            </button>
+            <img src="/logo.svg" alt="Logo" className="w-[28px] h-[28px]" />
+          </div>
+
+          {/* Right settings action */}
+          <div>
             <SettingsMenu 
               onProfile={onProfile} 
               onLogin={onLogin}
               onLogout={onLogout}
               darkMode={darkMode} 
               toggleTheme={toggleTheme} 
+              minimal={true}
             />
           </div>
+        </div>
 
-          <div className="flex justify-center w-full">
-            <div className="flex w-full sm:w-auto overflow-x-auto no-scrollbar bg-slate-200/50 dark:bg-slate-900/50 p-1.5 rounded-2xl backdrop-blur-sm border border-slate-300/50 dark:border-slate-700/50 shadow-inner">
-              <button
-                onClick={() => setActiveTab('lesson')}
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-2.5 px-4 sm:px-10 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap ${
-                  activeTab === 'lesson'
-                    ? 'text-blue-700 dark:text-blue-300 bg-white dark:bg-slate-700 shadow-md shadow-blue-900/5 dark:shadow-black/20 border border-slate-200/50 dark:border-slate-600/50'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                }`}
-              >
-                <BookOpen className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'lesson' ? 'scale-110 text-blue-600 dark:text-blue-400' : 'scale-100'}`} />
-                <span>Plano</span>
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('evaluation')}
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-2.5 px-4 sm:px-10 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap ${
-                  activeTab === 'evaluation'
-                    ? 'text-indigo-700 dark:text-indigo-300 bg-white dark:bg-slate-700 shadow-md shadow-indigo-900/5 dark:shadow-black/20 border border-slate-200/50 dark:border-slate-600/50'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                }`}
-              >
-                <FileCheck className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'evaluation' ? 'scale-110 text-indigo-600 dark:text-indigo-400' : 'scale-100'}`} />
-                <span>Avaliação</span>
-              </button>
+        {/* 6. Linha divisória fina entre o header superior e o container das abas */}
+        <div className="h-px bg-slate-200 dark:bg-[#1a3050] w-full" />
 
-              <button
-                onClick={() => setActiveTab('dosification')}
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-2.5 px-4 sm:px-10 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap ${
-                  activeTab === 'dosification'
-                    ? 'text-orange-700 dark:text-orange-300 bg-white dark:bg-slate-700 shadow-md shadow-orange-900/5 dark:shadow-black/20 border border-slate-200/50 dark:border-slate-600/50'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                }`}
-              >
-                <Calendar className={`w-5 h-5 transition-transform duration-300 ${activeTab === 'dosification' ? 'scale-110 text-orange-600 dark:text-orange-400' : 'scale-100'}`} />
-                <span>Dosificação</span>
-              </button>
-            </div>
+        {/* Row 2: Tabs Container (Height-optimized, no overflow/scroll, flex-1 equal cols, mx-3) */}
+        <div className="py-3 flex justify-center max-w-4xl mx-auto w-full">
+          <div className="mx-3 w-[calc(100%_-_24px)] md:max-w-md bg-slate-200/60 dark:bg-[#112033] p-[4px] rounded-[12px] flex">
+            {/* 1st Tab: Plano */}
+            <button
+              onClick={() => setActiveTab('lesson')}
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-1.5 rounded-[8px] font-semibold transition-all duration-300 ${
+                activeTab === 'lesson'
+                  ? 'bg-[#1e3a5f] text-white shadow-sm'
+                  : 'bg-transparent text-slate-500 dark:text-[#6b8cad] hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              <BookOpen className={`w-[16px] h-[16px] shrink-0 transition-transform ${activeTab === 'lesson' ? 'text-white' : 'text-slate-400 dark:text-[#6b8cad]'}`} />
+              <span className="text-[11px]">Plano</span>
+            </button>
+            
+            {/* 2nd Tab: Avaliação */}
+            <button
+              onClick={() => setActiveTab('evaluation')}
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-1.5 rounded-[8px] font-semibold transition-all duration-300 ${
+                activeTab === 'evaluation'
+                  ? 'bg-[#1e3a5f] text-white shadow-sm'
+                  : 'bg-transparent text-slate-500 dark:text-[#6b8cad] hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              <FileCheck className={`w-[16px] h-[16px] shrink-0 transition-transform ${activeTab === 'evaluation' ? 'text-white' : 'text-slate-400 dark:text-[#6b8cad]'}`} />
+              <span className="text-[11px]">Avaliação</span>
+            </button>
+
+            {/* 3rd Tab: Dosificação */}
+            <button
+              onClick={() => setActiveTab('dosification')}
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-1.5 rounded-[8px] font-semibold transition-all duration-300 ${
+                activeTab === 'dosification'
+                  ? 'bg-[#1e3a5f] text-white shadow-sm'
+                  : 'bg-transparent text-slate-500 dark:text-[#6b8cad] hover:text-slate-800 dark:hover:text-[#8aa4c8]'
+              }`}
+            >
+              <Calendar className={`w-[16px] h-[16px] shrink-0 transition-transform ${activeTab === 'dosification' ? 'text-white' : 'text-slate-400 dark:text-[#6b8cad]'}`} />
+              <span className="text-[11px]">Dosificação</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 md:pt-48 pb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-[132px] sm:pt-[140px] pb-12">
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-800 transition-all duration-300 relative overflow-hidden">
           {activeTab === 'lesson' ? (
             <LessonForm 

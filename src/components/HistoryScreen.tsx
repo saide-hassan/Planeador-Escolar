@@ -133,142 +133,146 @@ export default function HistoryScreen({ onBack, onEdit, onProfile, onLogin, onLo
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards"
-            >
-              <div className={`absolute top-0 left-0 w-1 h-full transition-colors ${item.type === 'evaluation' ? 'bg-slate-500/30 group-hover:bg-slate-600' : 'bg-blue-500/20 group-hover:bg-blue-500'}`} />
-              
-              <div className="mb-4 flex-grow">
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                    item.type === 'evaluation' 
-                      ? 'bg-slate-200 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300' 
-                      : item.type === 'dosification'
-                      ? 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300'
-                      : item.type === 'biweekly'
-                      ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
-                      : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
-                  }`}>
-                    {item.type === 'evaluation' ? 'Avaliação' : item.type === 'dosification' ? 'Dosificação' : item.type === 'biweekly' ? 'Plano Quinzenal' : 'Plano de Aula'}
-                  </span>
-                </div>
-                <h3 className={`text-base font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${
-                  item.type === 'evaluation' 
-                    ? 'group-hover:text-slate-600 dark:group-hover:text-slate-400' 
-                    : item.type === 'dosification'
-                    ? 'group-hover:text-orange-600 dark:group-hover:text-orange-400'
-                    : item.type === 'biweekly'
-                    ? 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
-                    : 'group-hover:text-blue-600 dark:group-hover:text-blue-400'
-                }`}>
-                  {item.type === 'evaluation' 
-                    ? (item as Evaluation).topics 
-                    : item.type === 'dosification'
-                    ? `${(item as Dosification).term} - ${(item as Dosification).subject}`
-                    : item.type === 'biweekly'
-                    ? `Plano Quinzenal - ${(item as BiWeeklyPlan).subject}`
-                    : (item as LessonPlan).topic}
-                </h3>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border ${
-                    item.type === 'evaluation' 
-                      ? 'bg-white dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' 
-                      : item.type === 'dosification'
-                      ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-800'
-                      : item.type === 'biweekly'
-                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-800'
-                      : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'
-                  }`}>
-                    {item.type === 'evaluation' ? <FileCheck className="w-3 h-3" /> : item.type === 'dosification' ? <Calendar className="w-3 h-3" /> : item.type === 'biweekly' ? <Sparkles className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
-                    {item.subject}
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    {item.grade}
-                  </span>
-                  {item.type === 'evaluation' && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                      {(item as Evaluation).evaluationType}
+          {items.map((item) => {
+            const cardStyles = {
+              evaluation: {
+                borderHover: 'hover:border-indigo-300 dark:hover:border-indigo-800/50 hover:shadow-lg hover:shadow-indigo-500/5',
+                indicator: 'bg-indigo-600 dark:bg-indigo-500',
+                badge: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-850/40',
+                titleHover: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400',
+                subjectBadge: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-800'
+              },
+              dosification: {
+                borderHover: 'hover:border-teal-300 dark:hover:border-teal-800/50 hover:shadow-lg hover:shadow-teal-500/5',
+                indicator: 'bg-teal-600 dark:bg-teal-500',
+                badge: 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200/50 dark:border-teal-850/40',
+                titleHover: 'group-hover:text-teal-600 dark:group-hover:text-teal-400',
+                subjectBadge: 'bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-100 dark:border-teal-800'
+              },
+              biweekly: {
+                borderHover: 'hover:border-sky-300 dark:hover:border-sky-800/50 hover:shadow-lg hover:shadow-sky-500/5',
+                indicator: 'bg-sky-600 dark:bg-sky-500',
+                badge: 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200/50 dark:border-sky-850/40',
+                titleHover: 'group-hover:text-sky-600 dark:group-hover:text-sky-400',
+                subjectBadge: 'bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 border-sky-100 dark:border-sky-800'
+              },
+              lesson: {
+                borderHover: 'hover:border-slate-300 dark:hover:border-slate-755 hover:shadow-lg hover:shadow-slate-500/5',
+                indicator: 'bg-[#1e3a5f] dark:bg-[#3b82f6]',
+                badge: 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700',
+                titleHover: 'group-hover:text-blue-600 dark:group-hover:text-blue-400',
+                subjectBadge: 'bg-slate-50 dark:bg-slate-900/10 text-slate-700 dark:text-slate-300 border-slate-100 dark:border-slate-800'
+              }
+            };
+
+            const typeKey = (item.type === 'evaluation' || item.type === 'dosification' || item.type === 'biweekly') ? item.type : 'lesson';
+            const style = cardStyles[typeKey];
+
+            return (
+              <div
+                key={item.id}
+                className={`bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm transition-all group relative overflow-hidden flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards ${style.borderHover}`}
+              >
+                {/* Colored Left Edge Indicator (Visual Distinction) */}
+                <div className={`absolute top-0 left-0 w-1.5 h-full transition-all duration-300 ${style.indicator}`} />
+
+                <div className="mb-4 flex-grow relative z-10 pl-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${style.badge}`}>
+                      {item.type === 'evaluation' ? 'Avaliação' : item.type === 'dosification' ? 'Dosificação' : item.type === 'biweekly' ? 'Plano Quinzenal' : 'Plano de Aula'}
                     </span>
+                  </div>
+                  <h3 className={`text-base font-bold text-slate-900 dark:text-white line-clamp-2 mb-2 transition-colors ${style.titleHover}`}>
+                    {item.type === 'evaluation' 
+                      ? (item as Evaluation).topics 
+                      : item.type === 'dosification'
+                      ? `${(item as Dosification).term} - ${(item as Dosification).subject}`
+                      : item.type === 'biweekly'
+                      ? `Plano Quinzenal - ${(item as BiWeeklyPlan).subject}`
+                      : (item as LessonPlan).topic}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${style.subjectBadge}`}>
+                      {item.subject}
+                    </span>
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      {item.grade}
+                    </span>
+                    {item.type === 'evaluation' && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        {(item as Evaluation).evaluationType}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-6 pt-4 border-t border-slate-100 dark:border-slate-800 relative z-10 pl-2">
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <span>{item.type === 'evaluation' ? 'Data' : (item.type === 'dosification' || item.type === 'biweekly') ? 'Ano' : 'Aula'}: {(item.type === 'dosification' || item.type === 'biweekly') ? (item as any).year : format(new Date(item.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
+                  </div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
+                    <span>Gerado: {item.createdAt ? format(new Date(item.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR }) : 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 mt-auto relative z-10 pl-2">
+                  {item.type === 'evaluation' ? (
+                    <>
+                      <button
+                        onClick={() => startDownload(() => downloadEvaluationDocx(item as Evaluation))}
+                        className="flex-1 px-3 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs h-9"
+                      >
+                        Avaliação
+                      </button>
+                      <button
+                        onClick={() => startDownload(() => downloadEvaluationGridDocx(item as Evaluation))}
+                        className="flex-1 px-3 flex items-center justify-center bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs h-9"
+                      >
+                        Grelha
+                      </button>
+                    </>
+                  ) : item.type === 'dosification' ? (
+                    <button
+                      onClick={() => startDownload(() => downloadDosificationDocx(item as Dosification))}
+                      className="flex-grow px-4 flex items-center justify-center bg-teal-600 hover:bg-teal-700 dark:bg-teal-750 dark:hover:bg-teal-800 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm h-9"
+                    >
+                      Baixar
+                    </button>
+                  ) : item.type === 'biweekly' ? (
+                    <button
+                      onClick={() => startDownload(() => downloadBiWeeklyPlanDocx(item as BiWeeklyPlan))}
+                      className="flex-grow px-4 flex items-center justify-center bg-sky-600 hover:bg-sky-700 dark:bg-sky-700 dark:hover:bg-sky-850 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm h-9"
+                    >
+                      Baixar
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => startDownload(() => downloadDocx(item as LessonPlan))}
+                      className="flex-grow px-4 flex items-center justify-center bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm h-9"
+                    >
+                      Baixar
+                    </button>
                   )}
+                  
+                  <button
+                    onClick={() => onEdit(item)}
+                    className="px-4 flex items-center justify-center bg-white dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm h-9"
+                    title="Editar"
+                  >
+                    Editar
+                  </button>
+                  
+                  <button
+                    onClick={() => handleDeleteClick(item.id!)}
+                    className="px-4 flex items-center justify-center bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/20 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-200 dark:border-slate-700 py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm h-9"
+                    title="Excluir"
+                  >
+                    Excluir
+                  </button>
                 </div>
               </div>
-
-              <div className="space-y-2 mb-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                  <Calendar className="w-4 h-4 text-slate-400" />
-                  <span>{item.type === 'evaluation' ? 'Data' : (item.type === 'dosification' || item.type === 'biweekly') ? 'Ano' : 'Aula'}: {(item.type === 'dosification' || item.type === 'biweekly') ? (item as any).year : format(new Date(item.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  <span>Gerado: {item.createdAt ? format(new Date(item.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR }) : 'N/A'}</span>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2 mt-auto">
-                {item.type === 'evaluation' ? (
-                  <>
-                    <button
-                      onClick={() => startDownload(() => downloadEvaluationDocx(item as Evaluation))}
-                      className="flex-1 px-3 flex items-center justify-center gap-1 bg-slate-600 hover:bg-slate-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs"
-                    >
-                      <Download className="w-3 h-3" />
-                      Avaliação
-                    </button>
-                    <button
-                      onClick={() => startDownload(() => downloadEvaluationGridDocx(item as Evaluation))}
-                      className="flex-1 px-3 flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-xs"
-                    >
-                      <Download className="w-3 h-3" />
-                      Grelha
-                    </button>
-                  </>
-                ) : item.type === 'dosification' ? (
-                  <button
-                    onClick={() => startDownload(() => downloadDosificationDocx(item as Dosification))}
-                    className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
-                  >
-                    <Download className="w-4 h-4" />
-                    Baixar
-                  </button>
-                ) : item.type === 'biweekly' ? (
-                  <button
-                    onClick={() => startDownload(() => downloadBiWeeklyPlanDocx(item as BiWeeklyPlan))}
-                    className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
-                  >
-                    <Download className="w-4 h-4" />
-                    Baixar
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => startDownload(() => downloadDocx(item as LessonPlan))}
-                    className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
-                  >
-                    <Download className="w-4 h-4" />
-                    Baixar
-                  </button>
-                )}
-                
-                <button
-                  onClick={() => onEdit(item)}
-                  className="flex-grow-0 px-4 flex items-center justify-center gap-2 bg-white dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 py-2 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-medium text-sm w-auto"
-                  title="Editar"
-                >
-                  <Edit className="w-4 h-4" />
-                  Editar
-                </button>
-                
-                <button
-                  onClick={() => handleDeleteClick(item.id!)}
-                  className="p-2 ml-auto text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
-                  title="Excluir"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

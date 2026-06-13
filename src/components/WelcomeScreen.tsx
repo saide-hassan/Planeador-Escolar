@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, History } from 'lucide-react';
+import { ArrowRight, Sparkles, Clock } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
 
 interface WelcomeScreenProps {
@@ -14,81 +14,90 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, onLogout, darkMode, toggleTheme }: WelcomeScreenProps) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-black p-4 transition-colors duration-500 overflow-hidden">
-      {/* Header */}
-      <div className="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-700">
-        {/* Logo Left */}
-        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-2.5 rounded-xl border border-white/50 dark:border-slate-700 shadow-lg">
-          <img src="/logo.svg" alt="Logo" className="w-6 h-6" />
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#F6FAFD] dark:bg-[#0d1b2a] text-slate-800 dark:text-white p-0 transition-colors duration-500 overflow-y-auto no-scrollbar">
+      {/* Header (height: 56px, padding lateral: 20px) */}
+      <header className="h-[56px] px-[20px] shrink-0 w-full flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-700">
+        {/* Logo Left - apenas o ícone, tamanho 28px */}
+        <div className="flex items-center">
+          <img src="/logo.svg" alt="Logo" className="w-[28px] h-[28px]" />
         </div>
 
-        {/* Right Actions */}
+        {/* Right Actions - ícone de settings limpo outline */}
         <SettingsMenu 
           onProfile={onProfile} 
           onLogin={onLogin}
           onLogout={onLogout}
           darkMode={darkMode} 
           toggleTheme={toggleTheme} 
+          minimal={true}
         />
-      </div>
+      </header>
 
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl opacity-50 animate-pulse duration-[4000ms]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-200/30 dark:bg-indigo-900/20 rounded-full blur-3xl opacity-50 animate-pulse duration-[5000ms]"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl opacity-30 animate-pulse duration-[4000ms]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl opacity-30 animate-pulse duration-[5000ms]"></div>
       </div>
 
-      <div className="relative z-10 max-w-3xl w-full text-center flex flex-col items-center justify-center h-full max-h-[900px] gap-6 md:gap-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
+      {/* Main Content Area - Centralizado verticalmente com min-height de calc(100vh - 56px) */}
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[calc(100vh_-_56px)] p-4 relative z-10 max-w-3xl mx-auto w-full text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out select-none">
         
-        {/* Text Content */}
-        <div className="space-y-5 md:space-y-8 px-4">
+        {/* Text and Separator Block */}
+        <div className="flex flex-col items-center px-4">
           <h1 
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-backwards"
+            className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-slate-900 dark:text-white tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-backwards"
+            style={{ letterSpacing: '-0.03em' }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-800 via-blue-800 to-slate-800 dark:from-blue-100 dark:via-white dark:to-blue-100">
-              Planificador Escolar
-            </span>
+            Planificador Escolar
           </h1>
+
+          {/* 5. Linha horizontal decorativa fina (1px, cor #1e3a5f, largura 48px) centrada */}
+          <div className="h-px bg-slate-300 dark:bg-[#1e3a5f] w-[48px] my-[24px] animate-in fade-in duration-700 delay-400" />
+
+          {/* Subtítulo: sans-serif leve, cor adaptada, tamanho ligeiramente maior, centralizado, no máximo 2 linhas */}
           <p 
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-backwards"
+            className="font-sans font-light text-[15px] md:text-[16px] text-slate-600 dark:text-[#8aa4c8] leading-relaxed max-w-[440px] mx-auto text-center line-clamp-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-backwards"
           >
-            A ferramenta inteligente para professores modernos. Crie Avaliações e Planos de Aula com o poder da IA.
+            A ferramenta inteligente para professores modernos.
           </p>
         </div>
 
-        {/* CTA Buttons */}
+        {/* Espaço de ~40px entre o subtítulo e os botões */}
+        <div className="h-[40px] shrink-0" />
+
+        {/* CTA Buttons - border-radius: 8px, largura máx: 280px */}
         <div 
-          className="pt-4 flex flex-col sm:flex-row items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700 fill-mode-backwards"
+          className="w-full flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700 fill-mode-backwards"
         >
+          {/* Botão primário "Começar Agora": fundo sólido em azul, mesmo do "Gerar Plano", com ícone sparkle à esquerda e seta → à direita */}
           <button
             onClick={onStart}
-            className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-medium text-white transition-all duration-300 bg-blue-700 dark:bg-blue-600 rounded-full hover:bg-blue-800 dark:hover:bg-blue-500 hover:shadow-2xl hover:shadow-blue-900/20 dark:hover:shadow-blue-900/40 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950 w-full sm:w-auto"
+            className="group relative flex items-center justify-between gap-3 px-6 py-4 text-base font-semibold text-white transition-all duration-300 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-[8px] active:scale-95 focus:outline-none w-full max-w-[280px] shadow-lg shadow-blue-900/10 dark:shadow-blue-900/20"
           >
-            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-blue-200 dark:text-blue-100 group-hover:text-yellow-300 transition-colors" />
-            <span>Começar Agora</span>
-            <ArrowRight className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:translate-x-1 opacity-70 group-hover:opacity-100" />
+            <Sparkles className="w-5 h-5 text-blue-200 group-hover:text-yellow-300 transition-colors shrink-0" />
+            <span className="flex-1 text-center">Começar Agora</span>
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1 shrink-0" />
           </button>
 
+          {/* Botão "Histórico": outlined com bordas refinadas e adaptadas para modo claro e escuro */}
           <button
             onClick={onHistory}
-            className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-medium text-slate-700 dark:text-slate-200 transition-all duration-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700 hover:shadow-lg hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:focus:ring-offset-slate-950 w-full sm:w-auto"
+            className="group relative flex items-center justify-center gap-2.5 px-6 py-4 text-base font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 bg-white/50 dark:bg-transparent border border-slate-200 dark:border-[#2a3f5f] rounded-[8px] hover:bg-slate-100 dark:hover:bg-white/5 active:scale-95 focus:outline-none w-full max-w-[280px]"
           >
-            <History className="w-5 h-5 md:w-6 md:h-6 text-slate-500 dark:text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
+            <Clock className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
             <span>Histórico</span>
           </button>
         </div>
       </div>
 
-      {/* Footer / Author */}
-      <div 
-        className="absolute bottom-2 left-0 w-full flex flex-col items-center gap-4 animate-in fade-in duration-1000 delay-1000 fill-mode-backwards opacity-70 hover:opacity-100 transition-opacity z-50"
+      {/* Footer / Author (copyright numa única linha, fonte 11px, cor adaptada, centralizado) */}
+      <footer 
+        className="absolute bottom-[20px] left-0 w-full flex justify-center z-50 px-4 animate-in fade-in duration-1000 delay-1000"
       >
-        <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 px-4 py-2 rounded-full border border-transparent hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center">
-          <span className="font-medium">
-            © <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Saide Hassan</a> - Todos os direitos reservados - {new Date().getFullYear()}
-          </span>
-        </div>
-      </div>
+        <p className="text-[11px] text-slate-500 dark:text-[#3a5275] text-center font-medium">
+          © <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Saide Hassan</a> - Todos os direitos reservados - {new Date().getFullYear()}
+        </p>
+      </footer>
     </div>
   );
 }
