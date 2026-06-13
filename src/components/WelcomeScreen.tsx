@@ -40,10 +40,20 @@ export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, 
       </div>
 
       {/* Main Content Area - Centralizado verticalmente com min-height de calc(100vh - 56px) */}
-      <div className="flex-1 flex flex-col items-center justify-center min-h-[calc(100vh_-_56px)] p-4 relative z-10 max-w-3xl mx-auto w-full text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out select-none">
+      <div 
+        className="flex-1 flex flex-col items-center justify-center relative z-10 max-w-3xl mx-auto w-full text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out select-none"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 'calc(100vh - 56px)',
+          padding: '24px 20px',
+        }}
+      >
         
         {/* Text and Separator Block */}
-        <div className="flex flex-col items-center px-4">
+        <div className="flex flex-col items-center px-4" style={{ marginTop: '0px', paddingTop: '0px' }}>
           <h1 
             className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-slate-900 dark:text-white tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-backwards"
             style={{ letterSpacing: '-0.03em' }}
@@ -90,12 +100,19 @@ export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, 
         </div>
       </div>
 
-      {/* Footer / Author (copyright numa única linha, fonte 11px, cor adaptada, centralizado) */}
+      {/* Footer / Author (copyright numa única linha, fonte 13px, cor #4a6a8a, centralizado) */}
       <footer 
-        className="absolute bottom-[20px] left-0 w-full flex justify-center z-50 px-4 animate-in fade-in duration-1000 delay-1000"
+        className="absolute bottom-0 left-0 w-full flex justify-center z-50 px-4 pb-[16px] animate-in fade-in duration-1000 delay-1000"
       >
-        <p className="text-[11px] text-slate-500 dark:text-[#3a5275] text-center font-medium">
-          © <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Saide Hassan</a> - Todos os direitos reservados - {new Date().getFullYear()}
+        <p 
+          className="text-center whitespace-nowrap"
+          style={{
+            fontSize: '13px',
+            color: '#4a6a8a',
+            fontWeight: 400,
+          }}
+        >
+          © <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-blue-450 transition-colors" style={{ color: 'inherit' }}>Saide Hassan</a> - Todos os direitos reservados - {new Date().getFullYear()}
         </p>
       </footer>
     </div>
