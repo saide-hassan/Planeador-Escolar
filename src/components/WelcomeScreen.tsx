@@ -98,18 +98,23 @@ export default function WelcomeScreen({ onStart, onHistory, onProfile, onLogin, 
             <span>Histórico</span>
           </button>
         </div>
+
+        {/* Dynamic spacer at the bottom to shift the entire title, subtitle, and buttons block upward away from the footer */}
+        <div className="h-[80px] sm:h-[140px] shrink-0" />
       </div>
 
-      {/* Footer / Author (copyright numa única linha, fonte 13px, cor #4a6a8a, centralizado) */}
+      {/* Footer / Author (copyright numa única linha, fonte 14.5px, cor #4a6a8a, centralizado) */}
       <footer 
         className="absolute bottom-0 left-0 w-full flex justify-center z-50 px-4 pb-[16px] animate-in fade-in duration-1000 delay-1000"
       >
         <p 
-          className="text-center whitespace-nowrap"
+          className="text-center"
           style={{
-            fontSize: '13px',
+            fontSize: '14.5px',
             color: '#4a6a8a',
             fontWeight: 400,
+            whiteSpace: 'normal',
+            maxWidth: '100%',
           }}
         >
           © <a href="https://saidehassan0506.web.app/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-blue-450 transition-colors" style={{ color: 'inherit' }}>Saide Hassan</a> - Todos os direitos reservados - {new Date().getFullYear()}

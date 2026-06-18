@@ -47,7 +47,7 @@ async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents
 }
 
 export async function generateLessonPlan(input: LessonPlanInput): Promise<LessonPlan> {
-  const model = "gemini-flash-latest";
+  const model = "gemini-3.5-flash";
   const ai = getAiClient();
   
   const prompt = `
@@ -230,7 +230,7 @@ export async function generateLessonPlan(input: LessonPlanInput): Promise<Lesson
 }
 
 export async function generateEvaluation(input: EvaluationInput): Promise<Evaluation> {
-  const model = "gemini-flash-latest";
+  const model = "gemini-3.5-flash";
   const ai = getAiClient();
   
   const prompt = `
@@ -383,7 +383,7 @@ export async function generateEvaluation(input: EvaluationInput): Promise<Evalua
 }
 
 export async function generateDosification(input: DosificationInput): Promise<Dosification> {
-  const model = "gemini-flash-latest";
+  const model = "gemini-3.5-flash";
   const ai = getAiClient();
   
   const prompt = `
@@ -492,7 +492,7 @@ export async function generateDosification(input: DosificationInput): Promise<Do
 }
 
 export async function generateBiWeeklyPlan(input: BiWeeklyPlanInput): Promise<BiWeeklyPlan> {
-  const model = "gemini-flash-latest";
+  const model = "gemini-3.5-flash";
   const ai = getAiClient();
   
   const selectedWeeksData = input.selectedWeeks.map(idx => input.dosification.weeks[idx]);
