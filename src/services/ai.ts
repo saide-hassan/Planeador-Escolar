@@ -12,8 +12,9 @@ const getAiClient = () => {
 // Helper function to delay execution
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Helper function to generate content with retry logic
-async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents: any, retries = 3): Promise<any> {
+// Helper function to generate content with retry logic and fallback models
+async function generateContentWithRetry(ai: GoogleGenAI, initialModel: string, contents: any, retries = 3): Promise<any> {
+  let currentModel = initialModel;
   for (let i = 0; i < retries; i++) {
     try {
       // Add a timeout of 90 seconds to prevent hanging indefinitely
@@ -22,7 +23,7 @@ async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents
       );
       
       const apiPromise = ai.models.generateContent({
-        model: model,
+        model: currentModel,
         contents: contents,
         config: {
           responseMimeType: "application/json",
@@ -32,13 +33,26 @@ async function generateContentWithRetry(ai: GoogleGenAI, model: string, contents
       const response = await Promise.race([apiPromise, timeoutPromise]);
       return response;
     } catch (error: any) {
-      // Check for 503 Service Unavailable or 429 Too Many Requests or Timeout
-      if (error?.status === 503 || error?.code === 503 || error?.status === 429 || error?.code === 429 || error?.message?.includes("Timeout")) {
-        console.warn(`Tentativa ${i + 1} falhou com erro ${error.status || error.code || error.message}. Tentando novamente...`);
+      const errorMsg = error?.message || "";
+      const isRateLimitOrDemand = error?.status === 503 || error?.code === 503 || 
+                                  error?.status === 429 || error?.code === 429 || 
+                                  errorMsg.includes("503") || errorMsg.includes("429") ||
+                                  errorMsg.includes("overloaded") || errorMsg.includes("RESOURCE_EXHAUSTED") ||
+                                  errorMsg.includes("Timeout");
+
+      if (isRateLimitOrDemand) {
+        console.warn(`Tentativa ${i + 1} com o modelo ${currentModel} falhou: ${error?.status || error?.code || errorMsg}.`);
+        
         if (i === retries - 1) throw error; // If last attempt, throw error
         
-        // Exponential backoff: 3s, 6s
-        await delay(3000 * Math.pow(2, i));
+        // Dynamically switch to "gemini-3.1-flash-lite" as fallback model on failures
+        if (currentModel !== "gemini-3.1-flash-lite") {
+          console.warn("Alternando para o modelo leve de segurança (gemini-3.1-flash-lite) para mitigar limite de quota...");
+          currentModel = "gemini-3.1-flash-lite";
+        }
+        
+        // Exponential backoff: 3.5s, 7s
+        await delay(3500 * Math.pow(2, i));
       } else {
         throw error; // Throw other errors immediately
       }
