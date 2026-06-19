@@ -46,7 +46,15 @@ export const getHistory = async (): Promise<HistoryItem[]> => {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
       return history;
     } catch (e) {
-      console.error('Error fetching history from Firebase', e);
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      const isOffline = errorMsg.toLowerCase().includes('offline') || 
+                        errorMsg.toLowerCase().includes('could not reach') || 
+                        errorMsg.toLowerCase().includes('network');
+      if (isOffline) {
+        console.warn('History service offline warning (could not fetch online list):', errorMsg);
+      } else {
+        console.error('Error fetching history from Firebase', e);
+      }
     }
   }
   return getHistorySync();
@@ -98,7 +106,15 @@ export const saveItem = async (item: HistoryItem) => {
         createdAt: cleanedItem.createdAt
       });
     } catch (e) {
-      console.error('Error saving item to Firebase', e);
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      const isOffline = errorMsg.toLowerCase().includes('offline') || 
+                        errorMsg.toLowerCase().includes('could not reach') || 
+                        errorMsg.toLowerCase().includes('network');
+      if (isOffline) {
+        console.warn('History service offline warning (could not save online list):', errorMsg);
+      } else {
+        console.error('Error saving item to Firebase', e);
+      }
     }
   }
 };
@@ -119,7 +135,15 @@ export const deleteItem = async (id: string) => {
       // but firestore rules should cover this.
       await deleteDoc(doc(db, 'history', id));
     } catch (e) {
-       console.error('Error deleting item from Firebase', e);
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      const isOffline = errorMsg.toLowerCase().includes('offline') || 
+                        errorMsg.toLowerCase().includes('could not reach') || 
+                        errorMsg.toLowerCase().includes('network');
+      if (isOffline) {
+        console.warn('History service offline warning (could not delete online item):', errorMsg);
+      } else {
+         console.error('Error deleting item from Firebase', e);
+      }
     }
   }
 };
@@ -140,7 +164,15 @@ export const clearHistory = async () => {
       const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
     } catch (e) {
-      console.error('Error clearing history on Firebase', e);
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      const isOffline = errorMsg.toLowerCase().includes('offline') || 
+                        errorMsg.toLowerCase().includes('could not reach') || 
+                        errorMsg.toLowerCase().includes('network');
+      if (isOffline) {
+        console.warn('History service offline warning (could not clear online history):', errorMsg);
+      } else {
+        console.error('Error clearing history on Firebase', e);
+      }
     }
   }
 };

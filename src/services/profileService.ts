@@ -47,9 +47,19 @@ export const getProfile = async (): Promise<TeacherProfile | null> => {
     // Fallback to local storage
     return getProfileSync();
   } catch (e) {
-    console.error('Error loading profile', e);
+    const errorMsg = e instanceof Error ? e.message : String(e);
+    const isOffline = errorMsg.toLowerCase().includes('offline') || 
+                      errorMsg.toLowerCase().includes('could not reach') || 
+                      errorMsg.toLowerCase().includes('network') ||
+                      errorMsg.toLowerCase().includes('failed to get document');
+    
+    if (isOffline) {
+      console.warn('Profile service offline fallback (client is offline):', errorMsg);
+    } else {
+      console.error('Error loading profile', e);
+    }
+    return getProfileSync();
   }
-  return null;
 };
 
 export const saveProfile = async (profile: TeacherProfile): Promise<void> => {
@@ -70,6 +80,15 @@ export const saveProfile = async (profile: TeacherProfile): Promise<void> => {
     
     window.dispatchEvent(new Event('profileUpdated'));
   } catch (e) {
-    console.error('Error saving profile', e);
+    const errorMsg = e instanceof Error ? e.message : String(e);
+    const isOffline = errorMsg.toLowerCase().includes('offline') || 
+                      errorMsg.toLowerCase().includes('could not reach') || 
+                      errorMsg.toLowerCase().includes('network');
+    
+    if (isOffline) {
+      console.warn('Profile service offline warning (could not save online):', errorMsg);
+    } else {
+      console.error('Error saving profile', e);
+    }
   }
 };
